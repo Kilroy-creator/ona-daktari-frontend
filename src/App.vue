@@ -1,11 +1,13 @@
 <template>
-  <router-view />
+<div>
+<HeaderNav />
+<router-view />
+<Footer />
+</div>
 </template>
 
-<script setup>
-// Nothing fancy here — router handles guards and redirects
-</script>
 
-<style>
-/* Add global app styles here or import your CSS */
-</style>
+<script setup>
+import HeaderNav from '@/components/common/HeaderNav.vue'
+import Footer from '@/components/common/Footer.vue'
+</script>

@@ -1,27 +1,29 @@
-// simple reactive auth store (singleton)
-// replace/mock with your real auth logic (Firebase, API, etc)
-import { reactive, readonly } from 'vue';
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-const state = reactive({
-  user: null,
-  userType: null, // "patient" | "doctor" | null
-});
 
-export function setAuth(user, userType) {
-  state.user = user;
-  state.userType = userType;
+export const useAuthStore = defineStore('auth', () => {
+const user = ref(null)
+const userType = ref(null)
+
+
+function login(payload) {
+user.value = { email: payload.email, name: payload.email.split('@')[0] }
+userType.value = payload.type
 }
 
-export function clearAuth() {
-  state.user = null;
-  state.userType = null;
+
+function register(payload) {
+user.value = { email: payload.email, name: payload.name }
+userType.value = payload.type
 }
 
-export function useAuth() {
-  // expose readonly for safety, and helpers
-  return {
-    state: readonly(state),
-    setAuth,
-    clearAuth,
-  };
+
+function logout() {
+user.value = null
+userType.value = null
 }
+
+
+return { user, userType, login, register, logout }
+})
