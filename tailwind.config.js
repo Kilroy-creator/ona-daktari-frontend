@@ -1,13 +1,18 @@
-cat > tailwind.config.js << 'EOF'
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx,vue}"
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#2563eb',
+        success: '#10b981',
+        warning: '#f59e0b',
+        error: '#ef4444',
+      },
+    },
   },
   plugins: [],
 }
-EOF
