@@ -1,21 +1,27 @@
 <template>
   <div id="app">
-    <transition-group name="notification" class="fixed top-4 right-4 z-50 space-y-2">
-      <div
-        v-for="notification in notifications"
-        :key="notification.id"
-        :class="[
-          'px-6 py-4 rounded-lg shadow-lg text-white font-semibold max-w-sm',
-          getNotificationClass(notification.type)
-        ]"
-      >
-        {{ notification.message }}
-      </div>
-    </transition-group>
 
+    <!-- Notification Container -->
+    <div class="fixed top-4 right-4 z-50 space-y-2">
+      <TransitionGroup name="notification">
+        <div
+          v-for="notification in notifications"
+          :key="notification.id"
+          :class="[
+            'px-6 py-4 rounded-lg shadow-lg text-white font-semibold max-w-sm',
+            getNotificationClass(notification.type)
+          ]"
+        >
+          {{ notification.message }}
+        </div>
+      </TransitionGroup>
+    </div>
+
+    <!-- Router View -->
     <router-view />
   </div>
 </template>
+
 
 <script setup>
 import { computed } from 'vue'
