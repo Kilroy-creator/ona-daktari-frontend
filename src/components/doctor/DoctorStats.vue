@@ -1,145 +1,171 @@
 <template>
-  <div class="grid md:grid-cols-4 gap-4 mb-8">
-    <!-- Pending Appointments -->
-    <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-lg border border-yellow-200 hover:shadow-lg transition">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Pending Requests</p>
-          <p class="text-3xl font-bold text-yellow-600 mt-2">{{ stats.pending }}</p>
-          <p class="text-xs text-gray-500 mt-1">Awaiting action</p>
-        </div>
-        <div class="text-4xl">⏳</div>
-      </div>
-    </div>
-
-    <!-- Total Patients -->
-    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200 hover:shadow-lg transition">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Total Patients</p>
-          <p class="text-3xl font-bold text-green-600 mt-2">{{ stats.totalPatients }}</p>
-          <p class="text-xs text-gray-500 mt-1">All time</p>
-        </div>
-        <div class="text-4xl">👥</div>
-      </div>
-    </div>
-
-    <!-- Messages -->
-    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-lg transition">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Messages</p>
-          <p class="text-3xl font-bold text-blue-600 mt-2">{{ stats.messages }}</p>
-          <p class="text-xs text-gray-500 mt-1">Unread</p>
-        </div>
-        <div class="text-4xl">💬</div>
-      </div>
-    </div>
-
-    <!-- Rating -->
-    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-lg transition">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Rating</p>
-          <div class="flex items-center gap-1 mt-2">
-            <span v-for="i in 5" :key="i" class="text-lg">
-              {{ i <= Math.floor(stats.rating) ? '⭐' : '☆' }}
-            </span>
+  <div>
+    <!-- Primary Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <!-- Pending Requests -->
+      <div class="group relative cursor-pointer h-full">
+        <div class="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+        <div class="relative bg-gradient-to-br from-yellow-50 via-yellow-50 to-orange-50 backdrop-blur-sm border border-yellow-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-yellow-500/60 transition hover:shadow-2xl hover:shadow-yellow-200/30">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
+          <div class="relative">
+            <p class="text-yellow-700 text-sm font-semibold mb-3">⏳ Pending Requests</p>
+            <h3 class="text-5xl font-bold text-yellow-600">{{ pendingCount }}</h3>
+            <p class="text-yellow-600 text-xs mt-2 font-medium">Awaiting action</p>
+            <div class="mt-4 h-2 bg-yellow-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full" style="width: 45%"></div>
+            </div>
           </div>
-          <p class="text-sm font-bold text-purple-600 mt-1">{{ stats.rating }} / 5.0</p>
         </div>
-        <div class="text-4xl">🌟</div>
+      </div>
+
+      <!-- Total Patients -->
+      <div class="group relative cursor-pointer h-full">
+        <div class="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+        <div class="relative bg-gradient-to-br from-green-50 via-green-50 to-emerald-50 backdrop-blur-sm border border-green-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-green-500/60 transition hover:shadow-2xl hover:shadow-green-200/30">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
+          <div class="relative">
+            <p class="text-green-700 text-sm font-semibold mb-3">👥 Total Patients</p>
+            <h3 class="text-5xl font-bold text-green-600">{{ patientsCount }}</h3>
+            <p class="text-green-600 text-xs mt-2 font-medium">All time</p>
+            <div class="mt-4 h-2 bg-green-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width: 78%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="group relative cursor-pointer h-full">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+        <div class="relative bg-gradient-to-br from-blue-50 via-blue-50 to-cyan-50 backdrop-blur-sm border border-blue-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-blue-500/60 transition hover:shadow-2xl hover:shadow-blue-200/30">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
+          <div class="relative">
+            <p class="text-blue-700 text-sm font-semibold mb-3">💬 Messages</p>
+            <h3 class="text-5xl font-bold text-blue-600">{{ messagesCount }}</h3>
+            <p class="text-blue-600 text-xs mt-2 font-medium">Unread</p>
+            <div class="mt-4 h-2 bg-blue-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full" style="width: 35%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <div class="group relative cursor-pointer h-full">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+        <div class="relative bg-gradient-to-br from-purple-50 via-purple-50 to-pink-50 backdrop-blur-sm border border-purple-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-purple-500/60 transition hover:shadow-2xl hover:shadow-purple-200/30">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
+          <div class="relative">
+            <p class="text-purple-700 text-sm font-semibold mb-3">⭐ Rating</p>
+            <div class="flex items-center gap-2">
+              <h3 class="text-5xl font-bold text-purple-600">{{ ratingCount }}</h3>
+              <span class="text-3xl animate-bounce">⭐</span>
+            </div>
+            <p class="text-purple-600 text-xs mt-2 font-medium">/ 5.0 Rating</p>
+            <div class="mt-4 h-2 bg-purple-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" style="width: 96%"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Secondary Stats Row (Optional) -->
-  <div v-if="showSecondaryStats" class="grid md:grid-cols-3 gap-4 mb-8">
-    <!-- Completed Appointments -->
-    <div class="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-lg transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Completed</p>
-          <p class="text-2xl font-bold text-gray-900 mt-2">{{ stats.completed }}</p>
+    <!-- Secondary Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <!-- Completed -->
+      <div class="group relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-2xl blur-lg group-hover:blur-xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+        <div class="relative bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 rounded-2xl p-8 group-hover:border-green-500/40 transition hover:shadow-xl hover:shadow-green-200/20">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-green-700 text-sm font-semibold mb-3">✓ Completed</p>
+              <h4 class="text-4xl font-bold text-green-600">{{ completedCount }}</h4>
+              <p class="text-green-600 text-xs mt-1 font-medium">Appointments</p>
+            </div>
+            <div class="text-6xl opacity-20">✓</div>
+          </div>
         </div>
-        <div class="text-3xl text-green-600">✓</div>
       </div>
-    </div>
 
-    <!-- Appointment Success Rate -->
-    <div class="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-lg transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Success Rate</p>
-          <p class="text-2xl font-bold text-gray-900 mt-2">{{ stats.successRate }}%</p>
+      <!-- Success Rate -->
+      <div class="group relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl blur-lg group-hover:blur-xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+        <div class="relative bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200/50 rounded-2xl p-8 group-hover:border-blue-500/40 transition hover:shadow-xl hover:shadow-blue-200/20">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-blue-700 text-sm font-semibold mb-3">📊 Success Rate</p>
+              <h4 class="text-4xl font-bold text-blue-600">{{ successRateCount }}%</h4>
+              <p class="text-blue-600 text-xs mt-1 font-medium">Patient Satisfaction</p>
+            </div>
+            <div class="text-6xl opacity-20">📊</div>
+          </div>
         </div>
-        <div class="text-3xl">📊</div>
       </div>
-    </div>
 
-    <!-- Next Appointment -->
-    <div class="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-lg transition">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Next Appointment</p>
-          <p class="text-lg font-bold text-gray-900 mt-2">{{ stats.nextAppointment }}</p>
+      <!-- Next Appointment -->
+      <div class="group relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 to-pink-500/10 rounded-2xl blur-lg group-hover:blur-xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+        <div class="relative bg-gradient-to-br from-red-50 to-pink-50 border border-red-200/50 rounded-2xl p-8 group-hover:border-red-500/40 transition hover:shadow-xl hover:shadow-red-200/20">
+          <div>
+            <p class="text-red-700 text-sm font-semibold mb-3">📅 Next Appointment</p>
+            <h4 class="text-2xl font-bold text-red-600 mb-1">{{ stats.nextAppointment }}</h4>
+            <p class="text-red-600 text-xs font-medium">Today</p>
+          </div>
         </div>
-        <div class="text-3xl">📅</div>
       </div>
-    </div>
-  </div>
-
-  <!-- Micro Stats (Optional) -->
-  <div v-if="showMicroStats" class="flex flex-wrap gap-4 mb-8">
-    <div class="bg-white px-4 py-3 rounded-lg border border-gray-200 text-sm">
-      <p class="text-gray-600">Average Response Time</p>
-      <p class="text-lg font-bold text-gray-900">{{ stats.avgResponseTime }}</p>
-    </div>
-    
-    <div class="bg-white px-4 py-3 rounded-lg border border-gray-200 text-sm">
-      <p class="text-gray-600">Patient Retention</p>
-      <p class="text-lg font-bold text-gray-900">{{ stats.patientRetention }}%</p>
-    </div>
-    
-    <div class="bg-white px-4 py-3 rounded-lg border border-gray-200 text-sm">
-      <p class="text-gray-600">Referrals This Month</p>
-      <p class="text-lg font-bold text-gray-900">{{ stats.referrals }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { ref, onMounted } from 'vue'
+
+const props = defineProps({
   stats: {
     type: Object,
-    required: true,
-    validator: (obj) => {
-      const required = ['pending', 'totalPatients', 'messages', 'rating']
-      return required.every(key => key in obj)
-    },
-    default: () => ({
-      pending: 3,
-      totalPatients: 156,
-      messages: 7,
-      rating: 4.8,
-      completed: 245,
-      successRate: 96,
-      nextAppointment: 'Today 2:00 PM',
-      avgResponseTime: '< 2 hours',
-      patientRetention: 92,
-      referrals: 12
-    })
-  },
-  showSecondaryStats: {
-    type: Boolean,
-    default: true
-  },
-  showMicroStats: {
-    type: Boolean,
-    default: true
+    required: true
   }
+})
+
+const pendingCount = ref(0)
+const patientsCount = ref(0)
+const messagesCount = ref(0)
+const ratingCount = ref(0)
+const completedCount = ref(0)
+const successRateCount = ref(0)
+
+const animateCounter = (current, target, duration = 2000) => {
+  const increment = target / (duration / 50)
+  const interval = setInterval(() => {
+    current.value += increment
+    if (current.value >= target) {
+      current.value = target
+      clearInterval(interval)
+    }
+  }, 50)
+}
+
+onMounted(() => {
+  animateCounter(pendingCount, props.stats.pendingRequests)
+  animateCounter(patientsCount, props.stats.totalPatients)
+  animateCounter(messagesCount, props.stats.unreadMessages)
+  animateCounter(ratingCount, props.stats.rating)
+  animateCounter(completedCount, props.stats.completedAppointments)
+  animateCounter(successRateCount, props.stats.successRate)
 })
 </script>
 
 <style scoped>
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
 </style>

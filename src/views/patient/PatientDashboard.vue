@@ -1,239 +1,267 @@
 <template>
-  <div class="relative min-h-screen">
-    <!-- FloatingLines Background -->
-    <FloatingLines />
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <!-- Navbar - FIXED -->
+    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200/50 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <router-link to="/" class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <span class="text-white font-bold text-lg">P</span>
+            </div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Ona Daktari
+            </h1>
+          </router-link>
 
-    <div class="relative z-10 p-6 max-w-7xl mx-auto">
-      <!-- Header with Aurora -->
-      <div class="relative mb-8 overflow-hidden rounded-2xl">
-        <Aurora />
-        <div class="relative z-10 p-8 text-white">
-          <ScrollReveal>
-            <h1 class="text-4xl font-bold mb-2">Welcome back, John!</h1>
-            <p class="text-blue-100">Your health dashboard</p>
-          </ScrollReveal>
+          <div class="hidden md:flex items-center gap-8">
+            <router-link to="/" class="text-gray-700 hover:text-purple-600 font-semibold transition">Home</router-link>
+            <router-link to="/doctors" class="text-gray-700 hover:text-purple-600 font-semibold transition">Doctors</router-link>
+            <router-link to="/health" class="text-gray-700 hover:text-purple-600 font-semibold transition">Health</router-link>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="relative p-2 text-gray-700 hover:text-purple-600 transition cursor-pointer">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span v-if="unreadMessages > 0" class="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+            </div>
+
+            <div class="flex items-center gap-3 pl-4 border-l border-purple-200">
+              <div class="text-right hidden sm:block">
+                <p class="text-sm font-bold text-gray-900">{{ user.name }}</p>
+                <p class="text-xs text-gray-600">Patient</p>
+              </div>
+              <button @click="showDropdown = !showDropdown" class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold hover:shadow-lg hover:shadow-purple-400/50 transition">
+                {{ user.name.charAt(0) }}
+              </button>
+
+              <div v-if="showDropdown" class="absolute top-14 right-4 bg-white border border-purple-200 rounded-xl shadow-xl p-2 min-w-56 z-50">
+                <router-link to="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded-lg transition font-semibold">👤 Profile</router-link>
+                <router-link to="/health-records" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded-lg transition font-semibold">📋 Health Records</router-link>
+                <button @click="logout" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition font-semibold">🚪 Logout</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Welcome Section -->
+      <div class="relative mb-12 overflow-hidden rounded-3xl">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-pink-400/30 backdrop-blur-3xl"></div>
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-300/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+
+        <div class="relative p-8 md:p-12">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                Welcome back, {{ user.name }}! 👋
+              </h2>
+              <p class="text-gray-700 text-lg font-medium">Your health dashboard - Track your wellness journey</p>
+            </div>
+            <div class="hidden lg:block text-9xl opacity-40 animate-bounce">❤️</div>
+          </div>
         </div>
       </div>
 
-      <!-- Shortcuts with MagicBento -->
-      <ScrollReveal :delay="100">
-        <div class="mb-8">
-          <h2 class="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-          <MagicBento>
-            <div class="shortcut-card">
-              <svg class="w-8 h-8 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <h3 class="font-semibold text-gray-900">Book Appointment</h3>
-              <p class="text-sm text-gray-600 mt-1">Schedule with a doctor</p>
+      <!-- Quick Actions -->
+      <div class="mb-12">
+        <h3 class="text-3xl font-bold text-gray-900 mb-8">⚡ Quick Actions</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div 
+            @click="activeView = 'browse-doctors'"
+            class="group relative cursor-pointer transform hover:scale-105 transition">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div class="relative bg-white border-2 border-blue-200 rounded-2xl p-6 text-center group-hover:border-blue-500 group-hover:shadow-2xl transition">
+              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">📅</div>
+              <h4 class="font-bold text-gray-900 text-sm">Book Appointment</h4>
+              <p class="text-xs text-gray-600 mt-1">Schedule with a doctor</p>
             </div>
-            
-            <div class="shortcut-card">
-              <svg class="w-8 h-8 text-green-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <h3 class="font-semibold text-gray-900">Medical Records</h3>
-              <p class="text-sm text-gray-600 mt-1">View your history</p>
-            </div>
-            
-            <div class="shortcut-card">
-              <svg class="w-8 h-8 text-purple-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-              </svg>
-              <h3 class="font-semibold text-gray-900">Chat with Doctor</h3>
-              <p class="text-sm text-gray-600 mt-1">Get instant support</p>
-            </div>
-            
-            <div class="shortcut-card">
-              <svg class="w-8 h-8 text-orange-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              <h3 class="font-semibold text-gray-900">Reminders</h3>
-              <p class="text-sm text-gray-600 mt-1">Medication alerts</p>
-            </div>
-          </MagicBento>
-        </div>
-      </ScrollReveal>
+          </div>
 
-      <!-- Appointments Section with FolderHolder -->
-      <div class="grid md:grid-cols-2 gap-6 mb-8">
+          <div 
+            @click="activeView = 'my-appointments'"
+            class="group relative cursor-pointer transform hover:scale-105 transition">
+            <div class="absolute inset-0 bg-gradient-to-r from-green-400/30 to-emerald-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div class="relative bg-white border-2 border-green-200 rounded-2xl p-6 text-center group-hover:border-green-500 group-hover:shadow-2xl transition">
+              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">📋</div>
+              <h4 class="font-bold text-gray-900 text-sm">My Appointments</h4>
+              <p class="text-xs text-gray-600 mt-1">View your scheduled appointments</p>
+            </div>
+          </div>
+
+          <div 
+            @click="activeView = 'chat'"
+            class="group relative cursor-pointer transform hover:scale-105 transition">
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div class="relative bg-white border-2 border-purple-200 rounded-2xl p-6 text-center group-hover:border-purple-500 group-hover:shadow-2xl transition">
+              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">💬</div>
+              <h4 class="font-bold text-gray-900 text-sm">Chat with Doctor</h4>
+              <p class="text-xs text-gray-600 mt-1">Get instant support</p>
+            </div>
+          </div>
+
+          <div 
+            @click="activeView = 'pharmacy'"
+            class="group relative cursor-pointer transform hover:scale-105 transition">
+            <div class="absolute inset-0 bg-gradient-to-r from-orange-400/30 to-red-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div class="relative bg-white border-2 border-orange-200 rounded-2xl p-6 text-center group-hover:border-orange-500 group-hover:shadow-2xl transition">
+              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">💊</div>
+              <h4 class="font-bold text-gray-900 text-sm">E-Pharmacy</h4>
+              <p class="text-xs text-gray-600 mt-1">Order medications</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard View -->
+      <div v-if="activeView === 'dashboard'" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <!-- Upcoming Appointments -->
-        <ScrollReveal :delay="200">
-          <FolderHolder>
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Upcoming Appointments</h3>
-            <AnimatedList>
-              <div
-                v-for="appointment in upcomingAppointments"
-                :key="appointment.id"
-                class="appointment-item mb-3 last:mb-0"
-              >
-                <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                  <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-                      {{ appointment.doctor.charAt(0) }}
-                    </div>
-                    <div>
-                      <p class="font-semibold text-gray-900">{{ appointment.doctor }}</p>
-                      <p class="text-sm text-gray-600">{{ appointment.specialty }}</p>
-                      <p class="text-sm text-blue-600 mt-1">{{ appointment.date }} at {{ appointment.time }}</p>
-                    </div>
-                  </div>
-                  <MagnetButton>
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
-                      Join
-                    </button>
-                  </MagnetButton>
-                </div>
-              </div>
-            </AnimatedList>
-          </FolderHolder>
-        </ScrollReveal>
+        <div class="lg:col-span-2">
+          <h3 class="text-2xl font-bold text-gray-900 mb-6">📅 Upcoming Appointments</h3>
+          <AppointmentCard 
+            v-for="apt in upcomingAppointments" 
+            :key="apt.id" 
+            :appointment="apt" 
+          />
+        </div>
 
         <!-- Pending Actions -->
-        <ScrollReveal :delay="300">
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Pending Actions</h3>
-            <AnimatedList>
-              <div
-                v-for="action in pendingActions"
-                :key="action.id"
-                class="action-item mb-3 last:mb-0"
-              >
-                <div class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
-                  <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                  <div class="flex-1">
-                    <p class="font-medium text-gray-900">{{ action.title }}</p>
-                    <p class="text-sm text-gray-600 mt-1">{{ action.description }}</p>
+        <div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-6">⚠️ Pending Actions</h3>
+          <div class="space-y-3">
+            <div v-for="action in pendingActions" :key="action.id" class="group relative cursor-pointer">
+              <div class="absolute inset-0 bg-gradient-to-r from-yellow-300/20 to-orange-300/20 rounded-xl blur-lg group-hover:blur-xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
+              <div class="relative bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4 group-hover:border-yellow-400 group-hover:shadow-lg transition">
+                <div class="flex gap-3">
+                  <span class="text-2xl">{{ action.emoji }}</span>
+                  <div>
+                    <h5 class="font-bold text-gray-900 text-sm">{{ action.title }}</h5>
+                    <p class="text-xs text-gray-700 mt-1">{{ action.desc }}</p>
                   </div>
                 </div>
               </div>
-            </AnimatedList>
+            </div>
           </div>
-        </ScrollReveal>
+        </div>
       </div>
 
       <!-- Health Stats -->
-      <ScrollReveal :delay="400">
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-bold text-gray-900 mb-6">Your Health Stats</h3>
-          <div class="grid md:grid-cols-4 gap-6">
-            <div class="text-center">
-              <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <p class="text-3xl font-bold text-gray-900">
-                <CountUp :end-value="72" :duration="2000" />
-              </p>
-              <p class="text-sm text-gray-600 mt-1">Heart Rate (bpm)</p>
-            </div>
+      <PatientStats v-if="activeView === 'dashboard'" :stats="healthStats" class="mb-12" />
 
-            <div class="text-center">
-              <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
-                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <p class="text-3xl font-bold text-gray-900">
-                <CountUp :end-value="120" :duration="2000" />/
-                <CountUp :end-value="80" :duration="2000" />
-              </p>
-              <p class="text-sm text-gray-600 mt-1">Blood Pressure</p>
-            </div>
-
-            <div class="text-center">
-              <div class="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-3">
-                <svg class="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <p class="text-3xl font-bold text-gray-900">
-                <CountUp :end-value="98" :duration="2000" />%
-              </p>
-              <p class="text-sm text-gray-600 mt-1">Blood Oxygen</p>
-            </div>
-
-            <div class="text-center">
-              <div class="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-3">
-                <svg class="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <p class="text-3xl font-bold text-gray-900">
-                <CountUp :end-value="7" :duration="2000" />h
-              </p>
-              <p class="text-sm text-gray-600 mt-1">Sleep Duration</p>
-            </div>
-          </div>
-        </div>
-      </ScrollReveal>
+      <!-- Sub Views -->
+      <BrowseDoctors v-if="activeView === 'browse-doctors'" @back="activeView = 'dashboard'" />
+      <MyAppointments v-if="activeView === 'my-appointments'" @back="activeView = 'dashboard'" />
+      <PatientChat v-if="activeView === 'chat'" @back="activeView = 'dashboard'" />
+      <Pharmacy v-if="activeView === 'pharmacy'" @back="activeView = 'dashboard'" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import ScrollReveal from '@/components/animations/ScrollReveal.vue'
-import FloatingLines from '@/components/animations/FloatingLines.vue'
-import Aurora from '@/components/animations/Aurora.vue'
-import MagicBento from '@/components/animations/MagicBento.vue'
-import FolderHolder from '@/components/animations/FolderHolder.vue'
-import AnimatedList from '@/components/animations/AnimatedList.vue'
-import CountUp from '@/components/animations/CountUp.vue'
-import MagnetButton from '@/components/animations/MagnetButton.vue'
+import { useRouter } from 'vue-router'
+import AppointmentCard from '@/components/patient/AppointmentCard.vue'
+import PatientStats from '@/components/patient/PatientStats.vue'
+import BrowseDoctors from '@/views/patient/BrowseDoctors.vue'
+import MyAppointments from '@/views/patient/MyAppointments.vue'
+import PatientChat from '@/views/patient/PatientChat.vue'
+import Pharmacy from '@/views/patient/Pharmacy.vue'
+
+const router = useRouter()
+const activeView = ref('dashboard')
+const showDropdown = ref(false)
+const unreadMessages = ref(1)
+
+const user = ref({
+  name: 'Test Patient',
+  email: 'test@patient.com',
+  age: 32,
+  phone: '0712345678'
+})
 
 const upcomingAppointments = ref([
-  {
-    id: 1,
-    doctor: 'Dr. Sarah Johnson',
-    specialty: 'Cardiologist',
-    date: 'Dec 15, 2025',
-    time: '10:00 AM'
+  { 
+    id: 1, 
+    doctor: 'Dr. Sarah Johnson', 
+    specialty: 'Cardiologist', 
+    date: 'Dec 15, 2025', 
+    time: '10:00 AM',
+    status: 'Confirmed',
+    color: 'from-blue-500 to-blue-600' 
   },
-  {
-    id: 2,
-    doctor: 'Dr. Michael Chen',
-    specialty: 'General Physician',
-    date: 'Dec 18, 2025',
-    time: '2:30 PM'
+  { 
+    id: 2, 
+    doctor: 'Dr. Michael Chen', 
+    specialty: 'General Physician', 
+    date: 'Dec 18, 2025', 
+    time: '2:30 PM',
+    status: 'Confirmed',
+    color: 'from-purple-500 to-purple-600' 
   }
 ])
 
+const healthStats = ref({
+  heartRate: 72,
+  bloodPressure: '120/80',
+  bloodOxygen: 98,
+  sleepDuration: 7,
+  steps: 8234,
+  calories: 2100
+})
+
 const pendingActions = ref([
-  {
-    id: 1,
-    title: 'Complete Pre-Appointment Form',
-    description: 'Fill out your medical history before your next visit'
-  },
-  {
-    id: 2,
-    title: 'Upload Lab Results',
-    description: 'Share your recent blood test results'
-  },
-  {
-    id: 3,
-    title: 'Confirm Appointment',
-    description: 'Confirm your appointment with Dr. Sarah Johnson'
-  }
+  { id: 1, emoji: '⚠️', title: 'Complete Pre-Appointment Form', desc: 'Fill out your medical history' },
+  { id: 2, emoji: '📤', title: 'Upload Lab Results', desc: 'Share your recent test results' },
+  { id: 3, emoji: '✓', title: 'Confirm Appointment', desc: 'Confirm with Dr. Sarah Johnson' }
 ])
+
+const logout = () => {
+  router.push('/login')
+}
 </script>
 
 <style scoped>
-.shortcut-card {
-  cursor: pointer;
-  text-align: center;
+.bg-clip-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.appointment-item,
-.action-item {
-  transition: transform 0.2s ease;
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
-.appointment-item:hover,
-.action-item:hover {
-  transform: translateX(5px);
+.animate-bounce {
+  animation: bounce 3s infinite;
+}
+
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
 </style>

@@ -373,11 +373,13 @@ const handleLogin = async () => {
 }
 
 const handleRegister = async () => {
+  // Validate passwords match
   if (formData.value.password !== formData.value.confirmPassword) {
     alert('Passwords do not match')
     return
   }
 
+  // Validate terms
   if (!formData.value.agreeTerms) {
     alert('Please agree to Terms of Service and Privacy Policy')
     return
@@ -386,20 +388,22 @@ const handleRegister = async () => {
   isLoading.value = true
 
   try {
-   await authStore.registerDoctor({
-  full_name: formData.value.name,
-  email: formData.value.email,
-  phone: formData.value.phone,
-  specialization: formData.value.specialty,
-  license_no: formData.value.license,
-  password: formData.value.password
-})
+    console.log('Sending doctor registration with data:', formData.value)
+    
+    await authStore.registerDoctor({
+      full_name: formData.value.name,
+      email: formData.value.email,
+      phone: formData.value.phone,
+      specialization: formData.value.specialty,
+      license_no: formData.value.license,
+      password: formData.value.password,
+      password_confirmation: formData.value.confirmPassword,
+    })
 
-
-    router.push('/doctor/login')
+    router.push('/doctor/dashboard')
   } catch (err) {
-    console.error('Registration failed:', err)
-    alert('Registration failed. Please try again.')
+    console.error('Registration failed:', err.message)
+    alert(`Registration failed: ${err.message}`)
   } finally {
     isLoading.value = false
   }

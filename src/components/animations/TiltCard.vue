@@ -54,11 +54,7 @@ const handleMouseLeave = () => {
 // ============================================
 // FILE: src/components/animations/DotGrid.vue
 // ============================================
-<template>
-  <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="dot-grid"></div>
-  </div>
-</template>
+
 
 <style scoped>
 .dot-grid {

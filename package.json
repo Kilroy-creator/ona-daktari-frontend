@@ -16,7 +16,8 @@
     "motion-v": "^1.7.4",
     "pinia": "^2.1.6",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "vue3-countup": "^0.0.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
