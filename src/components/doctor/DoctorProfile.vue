@@ -182,7 +182,8 @@
     </div>
 
     <!-- Stats Card -->
-    <div class="grid md:grid-cols-3 gap-6">
+    
+  <div class="grid md:grid-cols-3 gap-6">
       <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
         <p class="text-gray-600 text-sm font-medium mb-2">Completed Appointments</p>
         <p class="text-3xl font-bold text-blue-600">{{ stats.completed }}</p>
@@ -203,6 +204,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+
 
 const props = defineProps({
   profile: {

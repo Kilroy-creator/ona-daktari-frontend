@@ -5,9 +5,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <router-link to="/" class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <span class="text-white font-bold text-lg">P</span>
-            </div>
+            <img src="/logo.png" alt="Ona Daktari" class="w-10 h-10 rounded-lg" />
             <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Ona Daktari
             </h1>
@@ -47,7 +45,7 @@
       </div>
     </nav>
 
-    <!-- Main Content -->
+     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Welcome Section -->
       <div class="relative mb-12 overflow-hidden rounded-3xl">
@@ -61,7 +59,7 @@
               <h2 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
                 Welcome back, {{ user.name }}! 👋
               </h2>
-              <p class="text-gray-700 text-lg font-medium">Your health dashboard - Track your wellness journey</p>
+              <p class="text-gray-700 text-lg font-medium">Track your wellness and manage appointments</p>
             </div>
             <div class="hidden lg:block text-9xl opacity-40 animate-bounce">❤️</div>
           </div>
@@ -69,15 +67,17 @@
       </div>
 
       <!-- Quick Actions -->
-      <div class="mb-12">
-        <h3 class="text-3xl font-bold text-gray-900 mb-8">⚡ Quick Actions</h3>
+        <div class="mb-12">
+        <h3 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-2">
+          <span>⚡</span> Quick Actions
+        </h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div 
             @click="activeView = 'browse-doctors'"
             class="group relative cursor-pointer transform hover:scale-105 transition">
             <div class="absolute inset-0 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
             <div class="relative bg-white border-2 border-blue-200 rounded-2xl p-6 text-center group-hover:border-blue-500 group-hover:shadow-2xl transition">
-              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">📅</div>
+              <img src="/medical-appointment.png" alt="Book" class="w-12 h-12 mx-auto mb-3 group-hover:scale-125 transition object-contain" />
               <h4 class="font-bold text-gray-900 text-sm">Book Appointment</h4>
               <p class="text-xs text-gray-600 mt-1">Schedule with a doctor</p>
             </div>
@@ -88,9 +88,9 @@
             class="group relative cursor-pointer transform hover:scale-105 transition">
             <div class="absolute inset-0 bg-gradient-to-r from-green-400/30 to-emerald-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
             <div class="relative bg-white border-2 border-green-200 rounded-2xl p-6 text-center group-hover:border-green-500 group-hover:shadow-2xl transition">
-              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">📋</div>
+              <span class="text-4xl mb-3 block group-hover:scale-125 transition">📋</span>
               <h4 class="font-bold text-gray-900 text-sm">My Appointments</h4>
-              <p class="text-xs text-gray-600 mt-1">View your scheduled appointments</p>
+              <p class="text-xs text-gray-600 mt-1">View scheduled appointments</p>
             </div>
           </div>
 
@@ -99,7 +99,7 @@
             class="group relative cursor-pointer transform hover:scale-105 transition">
             <div class="absolute inset-0 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
             <div class="relative bg-white border-2 border-purple-200 rounded-2xl p-6 text-center group-hover:border-purple-500 group-hover:shadow-2xl transition">
-              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">💬</div>
+              <img src="/message.png" alt="Chat" class="w-12 h-12 mx-auto mb-3 group-hover:scale-125 transition object-contain" />
               <h4 class="font-bold text-gray-900 text-sm">Chat with Doctor</h4>
               <p class="text-xs text-gray-600 mt-1">Get instant support</p>
             </div>
@@ -110,14 +110,13 @@
             class="group relative cursor-pointer transform hover:scale-105 transition">
             <div class="absolute inset-0 bg-gradient-to-r from-orange-400/30 to-red-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
             <div class="relative bg-white border-2 border-orange-200 rounded-2xl p-6 text-center group-hover:border-orange-500 group-hover:shadow-2xl transition">
-              <div class="text-5xl mb-3 group-hover:scale-125 transition duration-300">💊</div>
+              <img src="/drugstore.png" alt="Pharmacy" class="w-12 h-12 mx-auto mb-3 group-hover:scale-125 transition object-contain" />
               <h4 class="font-bold text-gray-900 text-sm">E-Pharmacy</h4>
               <p class="text-xs text-gray-600 mt-1">Order medications</p>
             </div>
           </div>
         </div>
       </div>
-
       <!-- Main Dashboard View -->
       <div v-if="activeView === 'dashboard'" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <!-- Upcoming Appointments -->
@@ -262,6 +261,6 @@ const logout = () => {
 }
 
 .animation-delay-2000 {
-  animation-delay: 2s;
+  animation-delay: 2s;                 
 }
-</style>
+</style>                                                               

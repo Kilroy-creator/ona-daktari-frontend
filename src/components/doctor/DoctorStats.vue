@@ -118,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const props = defineProps({
   stats: {
@@ -134,26 +134,39 @@ const ratingCount = ref(0)
 const completedCount = ref(0)
 const successRateCount = ref(0)
 
-const animateCounter = (current, target, duration = 2000) => {
-  const increment = target / (duration / 50)
+const animateCounter = (current, target, duration = 2000, decimals = 0) => {
+  const steps = duration / 50
+  const increment = (target - current.value) / steps
+  let step = 0
   const interval = setInterval(() => {
+    step++
     current.value += increment
-    if (current.value >= target) {
+    if (step >= steps) {
       current.value = target
       clearInterval(interval)
     }
   }, 50)
 }
 
+// Rounded versions for display
+const roundedPending = computed(() => Math.round(pendingCount.value))
+const roundedPatients = computed(() => Math.round(patientsCount.value))
+const roundedMessages = computed(() => Math.round(messagesCount.value))
+const roundedRating = computed(() => ratingCount.value.toFixed(1)) // keep 1 decimal
+const roundedCompleted = computed(() => Math.round(completedCount.value))
+const roundedSuccessRate = computed(() => Math.round(successRateCount.value))
+
 onMounted(() => {
   animateCounter(pendingCount, props.stats.pendingRequests)
   animateCounter(patientsCount, props.stats.totalPatients)
   animateCounter(messagesCount, props.stats.unreadMessages)
-  animateCounter(ratingCount, props.stats.rating)
+  animateCounter(ratingCount, props.stats.rating, 2000) // allow decimal
   animateCounter(completedCount, props.stats.completedAppointments)
   animateCounter(successRateCount, props.stats.successRate)
 })
 </script>
+
+
 
 <style scoped>
 @keyframes bounce {

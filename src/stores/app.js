@@ -6,6 +6,7 @@ export const useAppStore = defineStore('app', () => {
   const theme = ref(localStorage.getItem('theme') || 'light')
   const sidebarOpen = ref(true)
   const notifications = ref([])
+
   const doctors = ref([
     {
       id: 1,
@@ -17,7 +18,8 @@ export const useAppStore = defineStore('app', () => {
       emoji: '👩‍⚕️',
       availability: 12,
       isVerified: true,
-      bio: 'Experienced cardiologist with 15+ years of practice.'
+      bio: 'Experienced cardiologist with 15+ years of practice.',
+      chatMessages: []
     },
     {
       id: 2,
@@ -29,7 +31,8 @@ export const useAppStore = defineStore('app', () => {
       emoji: '👨‍⚕️',
       availability: 8,
       isVerified: true,
-      bio: 'Specialist in joint and bone disorders.'
+      bio: 'Specialist in joint and bone disorders.',
+      chatMessages: []
     },
     {
       id: 3,
@@ -41,7 +44,8 @@ export const useAppStore = defineStore('app', () => {
       emoji: '👩‍⚕️',
       availability: 15,
       isVerified: true,
-      bio: 'Caring pediatrician with expertise in child health.'
+      bio: 'Caring pediatrician with expertise in child health.',
+      chatMessages: []
     },
     {
       id: 4,
@@ -53,9 +57,11 @@ export const useAppStore = defineStore('app', () => {
       emoji: '👨‍⚕️',
       availability: 5,
       isVerified: true,
-      bio: 'Expert neurologist specializing in complex cases.'
+      bio: 'Expert neurologist specializing in complex cases.',
+      chatMessages: []
     }
   ])
+
   const medicines = ref([
     { id: 1, name: 'Paracetamol 500mg', price: 50, category: 'Pain Relief', stock: 100 },
     { id: 2, name: 'Amoxicillin 250mg', price: 150, category: 'Antibiotics', stock: 45 },
@@ -65,35 +71,34 @@ export const useAppStore = defineStore('app', () => {
     { id: 6, name: 'Omeprazole 20mg', price: 200, category: 'Digestive Health', stock: 90 }
   ])
 
-  // Setters
+  // Functions for doctors chat
+  const sendMessage = (doctorId, content, sender) => {
+    const doctor = doctors.value.find(d => d.id === doctorId)
+    if (!doctor) return
+    doctor.chatMessages.push({
+      id: Date.now(),
+      sender,
+      content,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    })
+  }
+
+  // Other functions (theme, sidebar, notifications) remain unchanged
   const setTheme = (newTheme) => {
     theme.value = newTheme
     localStorage.setItem('theme', newTheme)
     document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 
-  const toggleSidebar = () => {
-    sidebarOpen.value = !sidebarOpen.value
-  }
+  const toggleSidebar = () => sidebarOpen.value = !sidebarOpen.value
 
-  // Notifications
   const addNotification = (notification) => {
     const id = Math.random().toString(36).substr(2, 9)
-    const newNotification = {
-      id,
-      type: 'info',
-      duration: 3000,
-      ...notification
-    }
-    
+    const newNotification = { id, type: 'info', duration: 3000, ...notification }
     notifications.value.push(newNotification)
-    
     if (newNotification.duration > 0) {
-      setTimeout(() => {
-        removeNotification(id)
-      }, newNotification.duration)
+      setTimeout(() => removeNotification(id), newNotification.duration)
     }
-    
     return id
   }
 
@@ -101,108 +106,41 @@ export const useAppStore = defineStore('app', () => {
     notifications.value = notifications.value.filter(n => n.id !== id)
   }
 
-  const clearNotifications = () => {
-    notifications.value = []
-  }
+  const clearNotifications = () => notifications.value = []
 
-  // Success notification
-  const notifySuccess = (message, duration = 3000) => {
-    return addNotification({
-      type: 'success',
-      message,
-      duration
-    })
-  }
+  const notifySuccess = (message, duration = 3000) => addNotification({ type: 'success', message, duration })
+  const notifyError = (message, duration = 5000) => addNotification({ type: 'error', message, duration })
+  const notifyInfo = (message, duration = 3000) => addNotification({ type: 'info', message, duration })
+  const notifyWarning = (message, duration = 4000) => addNotification({ type: 'warning', message, duration })
 
-  // Error notification
-  const notifyError = (message, duration = 5000) => {
-    return addNotification({
-      type: 'error',
-      message,
-      duration
-    })
-  }
+  // Computed
+  const getSpecialties = computed(() => [...new Set(doctors.value.map(d => d.specialty))])
+  const getMedicineCategories = computed(() => [...new Set(medicines.value.map(m => m.category))])
+  const getTopRatedDoctors = computed(() => [...doctors.value].sort((a, b) => b.rating - a.rating).slice(0, 3))
+  const getAvailableDoctorsCount = computed(() => doctors.value.filter(d => d.availability > 0).length)
 
-  // Info notification
-  const notifyInfo = (message, duration = 3000) => {
-    return addNotification({
-      type: 'info',
-      message,
-      duration
-    })
-  }
-
-  // Warning notification
-  const notifyWarning = (message, duration = 4000) => {
-    return addNotification({
-      type: 'warning',
-      message,
-      duration
-    })
-  }
-
-  // Search doctors
+  // Searches & getters
   const searchDoctors = (query) => {
     if (!query) return doctors.value
-
-    const lowerQuery = query.toLowerCase()
-    return doctors.value.filter(doc =>
-      doc.name.toLowerCase().includes(lowerQuery) ||
-      doc.specialty.toLowerCase().includes(lowerQuery) ||
-      doc.bio.toLowerCase().includes(lowerQuery)
+    const lower = query.toLowerCase()
+    return doctors.value.filter(d =>
+      d.name.toLowerCase().includes(lower) ||
+      d.specialty.toLowerCase().includes(lower) ||
+      d.bio.toLowerCase().includes(lower)
     )
   }
 
-  // Filter doctors by specialty
-  const getDoctorsBySpecialty = (specialty) => {
-    return doctors.value.filter(doc => doc.specialty === specialty)
-  }
-
-  // Get single doctor
-  const getDoctorById = (id) => {
-    return doctors.value.find(doc => doc.id === id)
-  }
-
-  // Search medicines
+  const getDoctorsBySpecialty = (specialty) => doctors.value.filter(d => d.specialty === specialty)
+  const getDoctorById = (id) => doctors.value.find(d => d.id === id)
   const searchMedicines = (query) => {
     if (!query) return medicines.value
-
-    const lowerQuery = query.toLowerCase()
-    return medicines.value.filter(med =>
-      med.name.toLowerCase().includes(lowerQuery) ||
-      med.category.toLowerCase().includes(lowerQuery)
+    const lower = query.toLowerCase()
+    return medicines.value.filter(m =>
+      m.name.toLowerCase().includes(lower) || m.category.toLowerCase().includes(lower)
     )
   }
-
-  // Get medicines by category
-  const getMedicinesByCategory = (category) => {
-    return medicines.value.filter(med => med.category === category)
-  }
-
-  // Get single medicine
-  const getMedicineById = (id) => {
-    return medicines.value.find(med => med.id === id)
-  }
-
-  // Get unique specialties
-  const getSpecialties = computed(() => {
-    return [...new Set(doctors.value.map(doc => doc.specialty))]
-  })
-
-  // Get unique medicine categories
-  const getMedicineCategories = computed(() => {
-    return [...new Set(medicines.value.map(med => med.category))]
-  })
-
-  // Get top rated doctors
-  const getTopRatedDoctors = computed(() => {
-    return [...doctors.value].sort((a, b) => b.rating - a.rating).slice(0, 3)
-  })
-
-  // Get available doctors count
-  const getAvailableDoctorsCount = computed(() => {
-    return doctors.value.filter(doc => doc.availability > 0).length
-  })
+  const getMedicinesByCategory = (category) => medicines.value.filter(m => m.category === category)
+  const getMedicineById = (id) => medicines.value.find(m => m.id === id)
 
   return {
     theme,
@@ -210,6 +148,7 @@ export const useAppStore = defineStore('app', () => {
     notifications,
     doctors,
     medicines,
+    sendMessage,
     setTheme,
     toggleSidebar,
     addNotification,

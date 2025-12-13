@@ -1,7 +1,9 @@
+/* Tailwind directives should only appear once, at the top */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Custom CSS variables */
 :root {
   --primary-color: #2563eb;
   --success-color: #10b981;
@@ -9,6 +11,7 @@
   --error-color: #ef4444;
 }
 
+/* Reset & global styles */
 * {
   margin: 0;
   padding: 0;

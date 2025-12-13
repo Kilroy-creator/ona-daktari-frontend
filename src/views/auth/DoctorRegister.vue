@@ -1,5 +1,16 @@
 <template>
   <div class="min-h-screen flex relative overflow-hidden">
+    <!-- Galaxy Background -->
+<Galaxy
+  :mouse-repulsion="true"
+  :mouse-interaction="true"
+  :density="1.5"
+  :glow-intensity="0.5"
+  :saturation="0.8"
+  :hue-shift="240"
+  class="absolute inset-0 z-0"
+/>
+
     <!-- Aurora Background -->
     <Aurora />
 
@@ -331,6 +342,7 @@ import MagnetButton from '@/components/animations/MagnetButton.vue'
 import AnimatedContent from '@/components/animations/AnimatedContent.vue'
 import ScrollReveal from '@/components/animations/ScrollReveal.vue'
 import CountUp from '@/components/animations/CountUp.vue'
+import Galaxy from '@/components/animations/Galaxy.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

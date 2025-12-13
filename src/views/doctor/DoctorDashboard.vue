@@ -14,9 +14,20 @@
           </div>
 
           <div class="hidden md:flex items-center gap-8">
-            <a href="#" class="text-gray-300 hover:text-purple-400 transition">Home</a>
-            <a href="#" class="text-gray-300 hover:text-purple-400 transition">Appointments</a>
-            <a href="#" class="text-gray-300 hover:text-purple-400 transition">Patients</a>
+            <a href="#" @click.prevent="activeTab = 'appointments'" 
+               :class="activeTab === 'appointments' ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400 transition'">
+              Appointments
+            </a>
+
+            <a href="#" @click.prevent="activeTab = 'messages'" 
+               :class="activeTab === 'messages' ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400 transition'">
+              Messages
+            </a>
+
+            <a href="#" @click.prevent="activeTab = 'patients'" 
+               :class="activeTab === 'patients' ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400 transition'">
+              Patients
+            </a>
           </div>
 
           <div class="flex items-center gap-4">
@@ -100,7 +111,7 @@
 
       <!-- Profile Tab -->
       <div v-if="activeTab === 'profile'" class="mb-12">
-        <DoctorProfile :user="user" />
+        <DoctorProfile :profile="user" />
       </div>
     </div>
   </div>
@@ -108,11 +119,17 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
 import DoctorStats from '@/components/doctor/DoctorStats.vue'
 import AppointmentRequest from '@/components/doctor/AppointmentRequest.vue'
 import DoctorProfile from '@/components/doctor/DoctorProfile.vue'
 import Appointments from '@/views/doctor/Appointments.vue'
 import DoctorMessages from '@/views/doctor/DoctorMessages.vue'
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 const activeTab = ref('appointments')
 const showDropdown = ref(false)
@@ -191,8 +208,19 @@ const sendMessage = (message) => {
   })
 }
 
+// --- UPDATED LOGOUT ---
 const logout = () => {
-  console.log('Logged out')
+  // Clear any auth tokens
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+
+  // Clear Pinia auth store (if used)
+  if (authStore) {
+    authStore.$reset()
+  }
+
+  // Redirect to doctor login page
+  router.push('/doctor/login')
 }
 </script>
 
