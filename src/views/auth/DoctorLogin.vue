@@ -79,6 +79,17 @@
       <FadeContent>
         <div class="w-full max-w-md">
           <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8">
+            <!-- Error Alert -->
+            <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">⚠️</span>
+                <div class="flex-1">
+                  <p class="font-semibold text-red-900 text-sm">{{ isLogin ? 'Login' : 'Registration' }} Failed</p>
+                  <p class="text-xs text-red-700">{{ errorMessage }}</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Toggle Between Login/Register -->
             <div class="flex gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
               <button
@@ -103,7 +114,7 @@
 
             <!-- Login Form -->
             <AnimatedContent v-if="isLogin">
-              <div class="space-y-5">
+              <form @submit.prevent="handleLogin" class="space-y-5">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                   <TrueFocus>
@@ -149,11 +160,11 @@
 
                 <MagnetButton class="w-full">
                   <button
-                    @click="handleLogin"
-                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    type="submit"
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="isLoading"
                   >
-                    {{ isLoading ? 'Logging in...' : 'Sign In' }}
+                    {{ isLoading ? 'Signing in...' : 'Sign In' }}
                   </button>
                 </MagnetButton>
 
@@ -190,12 +201,22 @@
                     <span class="text-sm font-medium">GitHub</span>
                   </button>
                 </div>
-              </div>
+
+                <!-- Link to Patient Login -->
+                <div class="text-center mt-4">
+                  <p class="text-sm text-gray-600">
+                    Not a doctor? 
+                    <router-link to="/patient/login" class="text-blue-600 hover:text-blue-700 font-semibold">
+                      Login as Patient
+                    </router-link>
+                  </p>
+                </div>
+              </form>
             </AnimatedContent>
 
             <!-- Register Form -->
             <AnimatedContent v-else>
-              <div class="space-y-5 max-h-[60vh] overflow-y-auto">
+              <form @submit.prevent="handleRegister" class="space-y-5 max-h-[60vh] overflow-y-auto">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <TrueFocus>
@@ -256,26 +277,13 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">License Number</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
                   <TrueFocus>
                     <input
-                      v-model="formData.license"
-                      type="text"
-                      placeholder="MC/12345"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                      required
-                    />
-                  </TrueFocus>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Hourly Rate (KES)</label>
-                  <TrueFocus>
-                    <input
-                      v-model.number="formData.hourlyRate"
+                      v-model.number="formData.experience"
                       type="number"
-                      placeholder="1500"
-                      min="100"
+                      placeholder="5"
+                      min="0"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
                       required
                     />
@@ -326,14 +334,14 @@
 
                 <MagnetButton class="w-full">
                   <button
-                    @click="handleRegister"
-                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    type="submit"
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="isLoading"
                   >
                     {{ isLoading ? 'Registering...' : 'Create Account' }}
                   </button>
                 </MagnetButton>
-              </div>
+              </form>
             </AnimatedContent>
           </div>
         </div>
@@ -364,6 +372,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const isLogin = ref(true)
+const errorMessage = ref('')
 
 const loginForm = ref({
   email: '',
@@ -375,8 +384,7 @@ const formData = ref({
   email: '',
   phone: '',
   specialty: '',
-  license: '',
-  hourlyRate: 1500,
+  experience: 0,        // ✅ Match database
   password: '',
   confirmPassword: '',
   agreeTerms: false
@@ -388,13 +396,22 @@ const isLoading = ref(false)
 
 const handleLogin = async () => {
   isLoading.value = true
+  errorMessage.value = ''
 
   try {
-    await authStore.login(loginForm.value.email, loginForm.value.password, 'doctor')
+    console.log('🔐 Attempting doctor login...')
+    
+    await authStore.login(
+      loginForm.value.email,
+      loginForm.value.password,
+      'doctor'
+    )
+    
+    console.log('✅ Login successful, redirecting...')
     router.push('/doctor/dashboard')
   } catch (err) {
-    console.error('Login failed:', err)
-    alert('Login failed. Please check your credentials.')
+    console.error('❌ Login failed:', err)
+    errorMessage.value = err.message || 'Login failed. Please check your credentials.'
   } finally {
     isLoading.value = false
   }
@@ -402,32 +419,36 @@ const handleLogin = async () => {
 
 const handleRegister = async () => {
   if (formData.value.password !== formData.value.confirmPassword) {
-    alert('Passwords do not match')
+    errorMessage.value = 'Passwords do not match'
     return
   }
 
   if (!formData.value.agreeTerms) {
-    alert('Please agree to Terms of Service and Privacy Policy')
+    errorMessage.value = 'Please agree to Terms of Service and Privacy Policy'
     return
   }
 
   isLoading.value = true
+  errorMessage.value = ''
 
   try {
+    console.log('📝 Attempting doctor registration...')
+    
     await authStore.registerDoctor({
       full_name: formData.value.name,
       email: formData.value.email,
       phone: formData.value.phone,
-      specialization: formData.value.specialty,
-      license_no: formData.value.license,
+      specialty: formData.value.specialty,      // ✅ Changed from specialization
+      experience: formData.value.experience,    // ✅ Added experience
       password: formData.value.password,
       password_confirmation: formData.value.confirmPassword,
     })
 
+    console.log('✅ Registration successful, redirecting...')
     router.push('/doctor/dashboard')
   } catch (err) {
-    console.error('Registration failed:', err.message)
-    alert(`Registration failed: ${err.message}`)
+    console.error('❌ Registration failed:', err)
+    errorMessage.value = err.message || 'Registration failed. Please try again.'
   } finally {
     isLoading.value = false
   }

@@ -1,110 +1,152 @@
 <template>
-  <div>
-    <h2 class="text-2xl font-bold text-gray-900 mb-6">My Appointments</h2>
-
-    <!-- Filter Tabs -->
-    <div class="flex gap-4 border-b mb-8 overflow-x-auto">
-      <button 
-        v-for="status in statusTabs" 
-        :key="status.id"
-        @click="selectedStatus = status.id"
-        :class="[
-          'px-4 py-2 font-semibold border-b-2 transition whitespace-nowrap',
-          selectedStatus === status.id 
-            ? 'border-purple-600 text-purple-600' 
-            : 'border-transparent text-gray-600 hover:text-gray-900'
-        ]"
-      >
-        {{ status.label }} ({{ getCountByStatus(status.id) }})
-      </button>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-8 px-6 rounded-b-3xl shadow-lg">
+      <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold mb-2">📅 My Appointments</h1>
+        <p class="text-blue-100">Manage and schedule your healthcare visits</p>
+      </div>
     </div>
 
-    <!-- Appointments List -->
-    <div class="space-y-4">
-      <div v-if="filteredAppointments.length === 0" class="bg-white p-8 rounded-lg text-center">
-        <div class="text-5xl mb-4">📅</div>
-        <p class="text-gray-600">No {{ selectedStatus }} appointments</p>
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <!-- Status Tabs -->
+      <div class="flex gap-2 overflow-x-auto pb-6 mb-8 scrollbar-hide">
+        <button 
+          v-for="status in statusTabs" 
+          :key="status.id"
+          @click="selectedStatus = status.id"
+          :class="[
+            'px-6 py-3 rounded-full font-semibold whitespace-nowrap transition-all duration-300 transform hover:scale-105',
+            selectedStatus === status.id 
+              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
+              : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-300'
+          ]"
+        >
+          {{ status.label }}
+          <span :class="['ml-2 px-2 py-1 rounded-full text-xs font-bold', 
+            selectedStatus === status.id ? 'bg-white/30' : 'bg-gray-200 text-gray-800'
+          ]">
+            {{ getCountByStatus(status.id) }}
+          </span>
+        </button>
       </div>
 
-      <div v-else class="grid gap-4">
-        <div 
-          v-for="apt in filteredAppointments" 
-          :key="apt.id"
-          class="bg-white p-6 rounded-lg border-l-4 hover:shadow-lg transition"
-          :class="getStatusBorderColor(apt.status)"
-        >
-          <div class="flex justify-between items-start mb-4">
-            <div class="flex gap-4 flex-1">
-              <div class="w-14 h-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-xl">
-                {{ apt.patientName.charAt(0) }}
-              </div>
-              
-              <div class="flex-1">
-                <h3 class="text-xl font-semibold text-gray-900">{{ apt.patientName }}</h3>
-                <p class="text-gray-600 text-sm">{{ apt.age }} years • {{ apt.gender }}</p>
-                
-                <div class="flex items-center gap-2 mt-2 text-gray-600 text-sm">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>{{ apt.date }} at {{ apt.time }}</span>
+      <!-- Appointments List -->
+      <div class="space-y-5">
+        <div v-if="filteredAppointments.length === 0" class="bg-white rounded-2xl shadow-lg p-12 text-center border-2 border-dashed border-gray-300">
+          <div class="text-6xl mb-4">📭</div>
+          <p class="text-2xl text-gray-600 font-semibold mb-2">No {{ selectedStatus }} appointments</p>
+          <p class="text-gray-500">Schedule your first appointment to get started</p>
+        </div>
+
+        <div v-else>
+          <div 
+            v-for="apt in filteredAppointments" 
+            :key="apt.id"
+            class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-l-8"
+            :class="getStatusBorderColor(apt.status)"
+          >
+            <div class="p-6">
+              <!-- Top Section -->
+              <div class="flex justify-between items-start mb-6">
+                <div class="flex gap-4 flex-1">
+                  <!-- Avatar -->
+                  <div class="relative">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                      {{ apt.patientName.charAt(0) }}
+                    </div>
+                    <div :class="['absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white', getStatusDotColor(apt.status)]"></div>
+                  </div>
+
+                  <!-- Patient Info -->
+                  <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                      <h3 class="text-2xl font-bold text-gray-900">{{ apt.patientName }}</h3>
+                      <span :class="['px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap', getStatusBadgeClass(apt.status)]">
+                        {{ capitalize(apt.status) }}
+                      </span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">{{ apt.age }} years • {{ apt.gender }}</p>
+
+                    <!-- DateTime and Reason -->
+                    <div class="space-y-2">
+                      <div class="flex items-center gap-2 text-gray-700">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="font-semibold">{{ apt.date }} at {{ apt.time }}</span>
+                      </div>
+                      <div class="flex items-center gap-2 text-gray-700">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span><span class="font-semibold">Reason:</span> {{ apt.reason }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div v-if="apt.notes" class="mt-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100">
+                      <p class="text-sm text-gray-700"><span class="font-semibold">Notes:</span> {{ apt.notes }}</p>
+                    </div>
+                  </div>
                 </div>
 
-                <p class="text-gray-600 text-sm mt-2">
-                  <span class="font-semibold">Reason:</span> {{ apt.reason }}
-                </p>
+                <!-- Right Actions -->
+                <div class="flex flex-col gap-3 ml-6 items-end">
+                  <div class="text-right">
+                    <p class="text-gray-600 text-xs mb-1">Consultation Fee</p>
+                    <p class="text-2xl font-bold text-green-600">KES {{ apt.fee }}</p>
+                  </div>
 
-                <div v-if="apt.notes" class="mt-2 p-2 bg-gray-50 rounded text-sm text-gray-600">
-                  <span class="font-semibold">Notes:</span> {{ apt.notes }}
+                  <div class="flex flex-wrap gap-2 justify-end">
+                    <button 
+                      v-if="apt.status === 'pending'"
+                      @click="openConfirmModal(apt)"
+                      class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:shadow-lg font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm"
+                      title="Confirm this appointment"
+                    >
+                      ✓ Confirm
+                    </button>
+                    
+                    <button 
+                      v-if="apt.status === 'confirmed' || apt.status === 'pending'"
+                      @click="openRescheduleModal(apt)"
+                      class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm"
+                      title="Reschedule appointment"
+                    >
+                      📅 Reschedule
+                    </button>
+
+                    <button 
+                      @click="openDetailsModal(apt)"
+                      class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:shadow-lg hover:bg-gray-700 font-semibold transition-all duration-300 text-sm"
+                      title="View full details"
+                    >
+                      📋 Details
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="flex flex-col gap-2 ml-4 items-end">
-              <span :class="['px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap', getStatusBadgeClass(apt.status)]">
-                {{ capitalize(apt.status) }}
-              </span>
-              
-              <div class="flex gap-2">
-                <button 
-                  v-if="apt.status === 'pending'"
-                  @click="openConfirmModal(apt)"
-                  class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition"
-                >
-                  ✓ Confirm
-                </button>
-                
-                <button 
-                  v-if="apt.status === 'confirmed' || apt.status === 'pending'"
-                  @click="openRescheduleModal(apt)"
-                  class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition"
-                >
-                  📅 Reschedule
-                </button>
-
-                <button 
-                  @click="openDetailsModal(apt)"
-                  class="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition"
-                >
-                  📋 Details
-                </button>
+              <!-- Bottom Info Grid -->
+              <div class="pt-6 border-t border-gray-200 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-blue-50 rounded-lg p-3">
+                  <p class="text-xs text-gray-600 font-semibold mb-1">PHONE</p>
+                  <p class="text-sm font-bold text-gray-900">{{ apt.phone }}</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-3">
+                  <p class="text-xs text-gray-600 font-semibold mb-1">EMAIL</p>
+                  <p class="text-sm font-bold text-gray-900 truncate">{{ apt.email }}</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-3">
+                  <p class="text-xs text-gray-600 font-semibold mb-1">TYPE</p>
+                  <p class="text-sm font-bold text-gray-900">{{ apt.type }}</p>
+                </div>
+                <div class="bg-orange-50 rounded-lg p-3">
+                  <p class="text-xs text-gray-600 font-semibold mb-1">STATUS</p>
+                  <p class="text-sm font-bold capitalize" :class="getStatusTextColor(apt.status)">{{ apt.status }}</p>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Patient Info Summary -->
-          <div class="mt-4 pt-4 border-t border-gray-200 grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <p class="text-gray-600">Phone</p>
-              <p class="font-semibold text-gray-900">{{ apt.phone }}</p>
-            </div>
-            <div>
-              <p class="text-gray-600">Type</p>
-              <p class="font-semibold text-gray-900">{{ apt.type }}</p>
-            </div>
-            <div>
-              <p class="text-gray-600">Fee</p>
-              <p class="font-semibold text-green-600">KES {{ apt.fee }}</p>
             </div>
           </div>
         </div>
@@ -119,18 +161,21 @@
       @confirm="handleConfirm"
       @cancel="selectedAppointment = null"
     >
-      <div v-if="selectedAppointment" class="space-y-4">
-        <div class="bg-blue-50 p-4 rounded-lg">
-          <p class="font-semibold text-gray-900">{{ selectedAppointment.patientName }}</p>
-          <p class="text-gray-600">{{ selectedAppointment.date }} at {{ selectedAppointment.time }}</p>
+      <div v-if="selectedAppointment" class="space-y-5">
+        <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-5 rounded-xl border border-blue-200">
+          <p class="font-bold text-gray-900 text-lg mb-1">{{ selectedAppointment.patientName }}</p>
+          <p class="text-gray-600 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5H4v8a2 2 0 002 2h12a2 2 0 002-2V7h-2v1a1 1 0 11-2 0V7H7v1a1 1 0 11-2 0V7z"/></svg>
+            {{ selectedAppointment.date }} at {{ selectedAppointment.time }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Confirmation Notes (Optional)</label>
+          <label class="block text-sm font-bold text-gray-700 mb-2">Confirmation Notes (Optional)</label>
           <textarea 
             v-model="confirmNotes"
             placeholder="Add any notes for the patient..."
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
             rows="3"
           ></textarea>
         </div>
@@ -145,43 +190,48 @@
       @confirm="handleReschedule"
       @cancel="selectedAppointment = null"
     >
-      <div v-if="selectedAppointment" class="space-y-4">
-        <div class="bg-blue-50 p-4 rounded-lg">
-          <p class="font-semibold text-gray-900">{{ selectedAppointment.patientName }}</p>
-          <p class="text-gray-600">Current: {{ selectedAppointment.date }} at {{ selectedAppointment.time }}</p>
+      <div v-if="selectedAppointment" class="space-y-5">
+        <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-5 rounded-xl border border-blue-200">
+          <p class="font-bold text-gray-900 text-lg mb-1">{{ selectedAppointment.patientName }}</p>
+          <p class="text-gray-600 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5H4v8a2 2 0 002 2h12a2 2 0 002-2V7h-2v1a1 1 0 11-2 0V7H7v1a1 1 0 11-2 0V7z"/></svg>
+            Current: {{ selectedAppointment.date }} at {{ selectedAppointment.time }}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">New Date</label>
+            <input 
+              v-model="rescheduleData.date" 
+              type="date" 
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">New Time</label>
+            <select 
+              v-model="rescheduleData.time"
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            >
+              <option value="">Select Time</option>
+              <option>09:00 AM</option>
+              <option>10:00 AM</option>
+              <option>11:00 AM</option>
+              <option>02:00 PM</option>
+              <option>03:00 PM</option>
+              <option>04:00 PM</option>
+            </select>
+          </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">New Date</label>
-          <input 
-            v-model="rescheduleData.date" 
-            type="date" 
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">New Time</label>
-          <select 
-            v-model="rescheduleData.time"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          >
-            <option value="">Select Time</option>
-            <option>09:00 AM</option>
-            <option>10:00 AM</option>
-            <option>11:00 AM</option>
-            <option>02:00 PM</option>
-            <option>03:00 PM</option>
-            <option>04:00 PM</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Rescheduling</label>
+          <label class="block text-sm font-bold text-gray-700 mb-2">Reason for Rescheduling</label>
           <textarea 
             v-model="rescheduleData.reason"
             placeholder="Explain why you're rescheduling..."
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
             rows="2"
           ></textarea>
         </div>
@@ -199,61 +249,70 @@
       <div v-if="selectedAppointment" class="space-y-6">
         <!-- Patient Info -->
         <div>
-          <h3 class="font-semibold text-gray-900 mb-3">Patient Information</h3>
+          <h3 class="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+            Patient Information
+          </h3>
           <div class="grid grid-cols-2 gap-4">
-            <div>
-              <p class="text-sm text-gray-600">Name</p>
-              <p class="font-semibold text-gray-900">{{ selectedAppointment.patientName }}</p>
+            <div class="bg-blue-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">NAME</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedAppointment.patientName }}</p>
             </div>
-            <div>
-              <p class="text-sm text-gray-600">Email</p>
-              <p class="font-semibold text-gray-900">{{ selectedAppointment.email }}</p>
+            <div class="bg-blue-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">EMAIL</p>
+              <p class="text-sm font-bold text-gray-900 truncate">{{ selectedAppointment.email }}</p>
             </div>
-            <div>
-              <p class="text-sm text-gray-600">Phone</p>
-              <p class="font-semibold text-gray-900">{{ selectedAppointment.phone }}</p>
+            <div class="bg-blue-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">PHONE</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedAppointment.phone }}</p>
             </div>
-            <div>
-              <p class="text-sm text-gray-600">Age</p>
-              <p class="font-semibold text-gray-900">{{ selectedAppointment.age }} years</p>
+            <div class="bg-blue-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">AGE</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedAppointment.age }} years</p>
             </div>
           </div>
         </div>
 
         <!-- Appointment Info -->
         <div>
-          <h3 class="font-semibold text-gray-900 mb-3">Appointment Details</h3>
+          <h3 class="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
+            <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5H4v8a2 2 0 002 2h12a2 2 0 002-2V7h-2v1a1 1 0 11-2 0V7H7v1a1 1 0 11-2 0V7z"/></svg>
+            Appointment Details
+          </h3>
           <div class="grid grid-cols-2 gap-4">
-            <div>
-              <p class="text-sm text-gray-600">Date</p>
-              <p class="font-semibold text-gray-900">{{ selectedAppointment.date }}</p>
+            <div class="bg-purple-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">DATE</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedAppointment.date }}</p>
             </div>
-            <div>
-              <p class="text-sm text-gray-600">Time</p>
-              <p class="font-semibold text-gray-900">{{ selectedAppointment.time }}</p>
+            <div class="bg-purple-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">TIME</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedAppointment.time }}</p>
             </div>
-            <div>
-              <p class="text-sm text-gray-600">Type</p>
-              <p class="font-semibold text-gray-900">{{ selectedAppointment.type }}</p>
+            <div class="bg-purple-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">TYPE</p>
+              <p class="text-sm font-bold text-gray-900">{{ selectedAppointment.type }}</p>
             </div>
-            <div>
-              <p class="text-sm text-gray-600">Fee</p>
-              <p class="font-semibold text-green-600">KES {{ selectedAppointment.fee }}</p>
+            <div class="bg-green-50 p-4 rounded-lg">
+              <p class="text-xs text-gray-600 font-bold mb-1">FEE</p>
+              <p class="text-sm font-bold text-green-600">KES {{ selectedAppointment.fee }}</p>
             </div>
           </div>
         </div>
 
         <!-- Medical Info -->
         <div>
-          <h3 class="font-semibold text-gray-900 mb-3">Medical Information</h3>
-          <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-600">Reason for Visit</p>
-              <p class="text-gray-900">{{ selectedAppointment.reason }}</p>
+          <h3 class="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
+            <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+            Medical Information
+          </h3>
+          <div class="space-y-4">
+            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+              <p class="text-xs text-gray-600 font-bold mb-1">REASON FOR VISIT</p>
+              <p class="text-sm text-gray-900">{{ selectedAppointment.reason }}</p>
             </div>
-            <div>
-              <p class="text-sm text-gray-600">Previous Notes</p>
-              <p class="text-gray-900">{{ selectedAppointment.notes || 'No notes' }}</p>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <p class="text-xs text-gray-600 font-bold mb-1">PREVIOUS NOTES</p>
+              <p class="text-sm text-gray-900">{{ selectedAppointment.notes || 'No notes' }}</p>
             </div>
           </div>
         </div>
@@ -348,12 +407,22 @@ const getCountByStatus = (status) => {
 
 const getStatusBorderColor = (status) => {
   const colors = {
-    pending: 'border-yellow-400',
-    confirmed: 'border-green-400',
-    completed: 'border-blue-400',
-    cancelled: 'border-red-400'
+    pending: 'border-yellow-500',
+    confirmed: 'border-green-500',
+    completed: 'border-blue-500',
+    cancelled: 'border-red-500'
   }
   return colors[status] || 'border-gray-400'
+}
+
+const getStatusDotColor = (status) => {
+  const colors = {
+    pending: 'bg-yellow-400',
+    confirmed: 'bg-green-400',
+    completed: 'bg-blue-400',
+    cancelled: 'bg-red-400'
+  }
+  return colors[status] || 'bg-gray-400'
 }
 
 const getStatusBadgeClass = (status) => {
@@ -364,6 +433,16 @@ const getStatusBadgeClass = (status) => {
     cancelled: 'bg-red-100 text-red-800'
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const getStatusTextColor = (status) => {
+  const colors = {
+    pending: 'text-yellow-600',
+    confirmed: 'text-green-600',
+    completed: 'text-blue-600',
+    cancelled: 'text-red-600'
+  }
+  return colors[status] || 'text-gray-600'
 }
 
 const openConfirmModal = (apt) => {

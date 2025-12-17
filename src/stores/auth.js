@@ -1,232 +1,284 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-const baseURL = API_URL.replace(/\/$/, '')
-
-axios.defaults.baseURL = baseURL
-axios.defaults.withCredentials = true
-axios.defaults.headers.common['Accept'] = 'application/json'
-axios.defaults.headers.common['Content-Type'] = 'application/json'
-
-console.log('API Base URL:', axios.defaults.baseURL)
+const API_BASE_URL = 'http://localhost:8000/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
-  const userType = ref(null)
   const token = ref(null)
+  const userType = ref(null)
   const loading = ref(false)
   const error = ref(null)
+  const validationErrors = ref({})
+  const chatMessages = ref([])
 
-  async function loadSanctum() {
+  // ✅ Initialize from localStorage
+  const initializeAuth = () => {
     try {
-      await axios.get('/sanctum/csrf-cookie')
-    } catch (err) {
-      console.error('Sanctum CSRF error:', err)
-      throw new Error('Failed to initialize authentication')
-    }
-  }
+      const savedToken = localStorage.getItem('token')
+      const savedUserType = localStorage.getItem('userType')
+      const savedUser = localStorage.getItem('user')
 
-  async function registerPatient(data) {
-    loading.value = true
-    error.value = null
-
-    try {
-      await loadSanctum()
-
-      console.log('Sending patient registration data:', {
-        name: data.full_name,
-        email: data.email,
-        phone: data.phone,
-        gender: data.gender,
-        date_of_birth: data.dob,
-        password: data.password,
-      })
-
-      const res = await axios.post('/api/patient/register', {
-        name: data.full_name,
-        email: data.email,
-        phone: data.phone,
-        gender: data.gender,
-        date_of_birth: data.dob,
-        password: data.password,
-        password_confirmation: data.password_confirmation,
-      })
-
-      user.value = res.data.user
-      userType.value = 'patient'
-      token.value = res.data.token
-
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
-
-      localStorage.setItem('auth_token', token.value)
-      localStorage.setItem('user_type', 'patient')
-      localStorage.setItem('user', JSON.stringify(res.data.user))
-
-      return res.data
-    } catch (err) {
-      console.error('Registration error details:', {
-        status: err.response?.status,
-        message: err.response?.data?.message,
-        errors: err.response?.data?.errors,
-        fullError: err.message,
-      })
-
-      const errorMessage = err.response?.data?.message || 
-                          err.response?.data?.errors || 
-                          err.message || 
-                          'Registration failed'
-      
-      error.value = errorMessage
-      throw new Error(errorMessage)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function registerDoctor(data) {
-    loading.value = true
-    error.value = null
-
-    try {
-      await loadSanctum()
-
-      console.log('Sending doctor registration data:', {
-        name: data.full_name,
-        email: data.email,
-        phone: data.phone,
-        specialty: data.specialization,
-        license_number: data.license_no,
-        password: data.password,
-      })
-
-      const res = await axios.post('/api/doctors/register', {
-        name: data.full_name,
-        email: data.email,
-        phone: data.phone,
-        specialty: data.specialization,
-        license_number: data.license_no,
-        password: data.password,
-        password_confirmation: data.password_confirmation,
-      })
-
-      user.value = res.data.user
-      userType.value = 'doctor'
-      token.value = res.data.token
-
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
-
-      localStorage.setItem('auth_token', token.value)
-      localStorage.setItem('user_type', 'doctor')
-      localStorage.setItem('user', JSON.stringify(res.data.user))
-
-      return res.data
-    } catch (err) {
-      console.error('Registration error details:', {
-        status: err.response?.status,
-        message: err.response?.data?.message,
-        errors: err.response?.data?.errors,
-        fullError: err.message,
-      })
-
-      const errorMessage = err.response?.data?.message || 
-                          err.response?.data?.errors || 
-                          err.message || 
-                          'Registration failed'
-      
-      error.value = errorMessage
-      throw new Error(errorMessage)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function login(email, password, type) {
-    loading.value = true
-    error.value = null
-
-    try {
-      await loadSanctum()
-
-      const endpoint = type === 'doctor' ? '/api/doctors/login' : '/api/patient/login'
-
-      console.log(`Logging in as ${type}:`, { email })
-
-      const res = await axios.post(endpoint, { email, password })
-
-      user.value = res.data.user
-      userType.value = type
-      token.value = res.data.token
-
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
-
-      localStorage.setItem('auth_token', token.value)
-      localStorage.setItem('user_type', type)
-      localStorage.setItem('user', JSON.stringify(res.data.user))
-
-      return res.data
-    } catch (err) {
-      console.error('Login error details:', {
-        status: err.response?.status,
-        message: err.response?.data?.message,
-        fullError: err.message,
-      })
-
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
-                          'Login failed'
-      error.value = errorMessage
-      throw new Error(errorMessage)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  function restoreSession() {
-    const savedToken = localStorage.getItem('auth_token')
-    const savedUserType = localStorage.getItem('user_type')
-    const savedUser = localStorage.getItem('user')
-
-    if (savedToken && savedUserType && savedUser) {
-      token.value = savedToken
-      userType.value = savedUserType
-      user.value = JSON.parse(savedUser)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`
-    }
-  }
-
-  async function logout() {
-    try {
-      if (token.value) {
-        await axios.post('/api/auth/logout').catch(() => {})
+      if (savedToken && savedUser) {
+        token.value = savedToken
+        userType.value = savedUserType
+        user.value = JSON.parse(savedUser)
+        console.log('✅ Auth restored from localStorage')
       }
-    } finally {
-      user.value = null
-      userType.value = null
-      token.value = null
-      error.value = null
-
-      delete axios.defaults.headers.common['Authorization']
-
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('user_type')
-      localStorage.removeItem('user')
+    } catch (e) {
+      console.error('❌ Failed to restore session:', e)
+      clearAuth()
     }
   }
 
-  restoreSession()
+  // ✅ Clear auth data
+  const clearAuth = () => {
+    user.value = null
+    token.value = null
+    userType.value = null
+    error.value = null
+    validationErrors.value = {}
+    localStorage.removeItem('token')
+    localStorage.removeItem('userType')
+    localStorage.removeItem('user')
+  }
+
+  // API Call Helper
+  const apiCall = async (endpoint, method = 'POST', data = null) => {
+    const url = `${API_BASE_URL}${endpoint}`
+    console.log(`🔗 ${method} ${url}`)
+    
+    const options = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    }
+
+    if (token.value) {
+      options.headers['Authorization'] = `Bearer ${token.value}`
+    }
+
+    if (data) {
+      options.body = JSON.stringify(data)
+    }
+
+    try {
+      const response = await fetch(url, options)
+      
+      // Try to parse response
+      let responseData = {}
+      try {
+        responseData = await response.json()
+      } catch (parseError) {
+        console.warn('⚠️ Could not parse response as JSON')
+      }
+      
+      if (!response.ok) {
+        // Log validation errors if they exist
+        if (responseData.errors) {
+          console.error('❌ Validation Errors:', responseData.errors)
+          validationErrors.value = responseData.errors
+        }
+        
+        const errorMsg = responseData.message || `HTTP ${response.status}`
+        throw new Error(errorMsg)
+      }
+
+      console.log(`✅ Success`)
+      validationErrors.value = {}
+      return responseData
+    } catch (err) {
+      console.error(`❌ API Error: ${err.message}`)
+      throw err
+    }
+  }
+
+  // Login Method
+  const login = async (email, password, role = 'patient') => {
+    loading.value = true
+    error.value = null
+    validationErrors.value = {}
+
+    try {
+      console.log(`\n🔐 Attempting ${role} login...\n`)
+      
+      let endpoint = ''
+      
+      if (role === 'patient') {
+        endpoint = '/patient/login'
+      } else if (role === 'doctor') {
+        endpoint = '/doctors/login'
+      } else {
+        throw new Error('Invalid role')
+      }
+
+      const response = await apiCall(endpoint, 'POST', {
+        email,
+        password
+      })
+
+      // Store auth data
+      if (!response.token || !response.user) {
+        throw new Error('Invalid response from server')
+      }
+
+      token.value = response.token
+      user.value = response.user
+      userType.value = role
+
+      localStorage.setItem('token', response.token)
+      localStorage.setItem('userType', role)
+      localStorage.setItem('user', JSON.stringify(response.user))
+
+      console.log(`✅✅✅ ${role.toUpperCase()} LOGIN SUCCESSFUL ✅✅✅\n`)
+      return response
+    } catch (err) {
+      error.value = err.message
+      console.error(`\n❌ ${role.toUpperCase()} LOGIN FAILED: ${err.message}\n`)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Register Patient
+  const registerPatient = async (formData) => {
+    loading.value = true
+    error.value = null
+    validationErrors.value = {}
+
+    try {
+      console.log(`\n📝 Registering patient...\n`)
+      
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        gender: formData.gender && formData.gender !== '' ? formData.gender.toLowerCase() : null,
+        date_of_birth: formData.date_of_birth || null,
+        password: formData.password,
+        password_confirmation: formData.password_confirmation
+      }
+      
+      console.log('📦 Sending payload:', {
+        ...payload,
+        password: '***',
+        password_confirmation: '***'
+      })
+      
+      const response = await apiCall('/patient/register', 'POST', payload)
+
+      // Auto-login after registration
+      if (response.token && response.user) {
+        token.value = response.token
+        user.value = response.user
+        userType.value = 'patient'
+
+        localStorage.setItem('token', response.token)
+        localStorage.setItem('userType', 'patient')
+        localStorage.setItem('user', JSON.stringify(response.user))
+      }
+
+      console.log(`✅ Patient registration successful\n`)
+      return response
+    } catch (err) {
+      error.value = err.message
+      console.error(`❌ Registration failed: ${err.message}\n`)
+      console.error('Validation Errors:', validationErrors.value)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Register Doctor
+  const registerDoctor = async (formData) => {
+    loading.value = true
+    error.value = null
+    validationErrors.value = {}
+
+    try {
+      console.log('📝 Registering doctor...')
+      
+      const response = await apiCall('/doctors/register', 'POST', {
+        name: formData.full_name || formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        specialty: formData.specialization || formData.specialty || null,  // ✅ Changed to 'specialty'
+        experience: formData.experience || 0,                               // ✅ Added experience
+        password: formData.password,
+        password_confirmation: formData.password_confirmation || formData.confirmPassword
+      })
+      // Auto-login after registration
+      if (response.token && response.user) {
+        token.value = response.token
+        user.value = response.user
+        userType.value = 'doctor'
+
+        localStorage.setItem('token', response.token)
+        localStorage.setItem('userType', 'doctor')
+        localStorage.setItem('user', JSON.stringify(response.user))
+      }
+
+      console.log(`✅ Doctor registration successful\n`)
+      return response
+    } catch (err) {
+      error.value = err.message
+      console.error(`❌ Registration failed: ${err.message}\n`)
+      console.error('Validation Errors:', validationErrors.value)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Send Message
+  const sendMessage = (content, sender) => {
+    chatMessages.value.push({
+      id: Date.now(),
+      content,
+      sender,
+      timestamp: new Date()
+    })
+  }
+
+  // Logout
+  const logout = () => {
+    clearAuth()
+    console.log('🚪 Logged out')
+  }
+
+  // Get Current User
+  const getCurrentUser = () => {
+    return user.value
+  }
+
+  // Check if Authenticated
+  const isAuthenticated = () => {
+    return !!(token.value && user.value)
+  }
+
+  // Initialize on store creation
+  initializeAuth()
 
   return {
     user,
-    userType,
     token,
+    userType,
     loading,
     error,
+    validationErrors,
+    chatMessages,
     login,
     registerPatient,
     registerDoctor,
     logout,
-    restoreSession,
+    getCurrentUser,
+    isAuthenticated,
+    sendMessage,
+    apiCall,
+    initializeAuth
   }
 })

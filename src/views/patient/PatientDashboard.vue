@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-    <!-- Navbar - FIXED -->
-    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200/50 shadow-lg">
+    <!-- Navbar - FIXED with z-40 -->
+    <nav class="sticky top-0 z-40 backdrop-blur-xl bg-white/95 border-b border-purple-200/50 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <router-link to="/" class="flex items-center gap-3">
@@ -45,7 +45,24 @@
       </div>
     </nav>
 
-     <!-- Main Content -->
+    <!-- Notifications Container - z-50 to appear above navbar -->
+    <div class="fixed top-20 right-6 z-50 space-y-3 pointer-events-none max-w-sm">
+      <!-- Toast notifications will render here -->
+      <div v-for="notification in notifications" :key="notification.id" 
+        class="notification animate-slide-in pointer-events-auto"
+        :class="getNotificationClass(notification.type)">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">{{ getNotificationIcon(notification.type) }}</span>
+          <div class="flex-1">
+            <p class="font-semibold text-sm">{{ notification.title }}</p>
+            <p class="text-xs opacity-90">{{ notification.message }}</p>
+          </div>
+          <button @click="removeNotification(notification.id)" class="text-white/60 hover:text-white">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Welcome Section -->
       <div class="relative mb-12 overflow-hidden rounded-3xl">
@@ -67,7 +84,7 @@
       </div>
 
       <!-- Quick Actions -->
-        <div class="mb-12">
+      <div class="mb-12">
         <h3 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-2">
           <span>⚡</span> Quick Actions
         </h3>
@@ -117,11 +134,15 @@
           </div>
         </div>
       </div>
+
       <!-- Main Dashboard View -->
       <div v-if="activeView === 'dashboard'" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <!-- Upcoming Appointments -->
         <div class="lg:col-span-2">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6">📅 Upcoming Appointments</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <img src="/medical-appointment.png" alt="Appointments" class="w-6 h-6" />
+            Upcoming Appointments
+          </h3>
           <AppointmentCard 
             v-for="apt in upcomingAppointments" 
             :key="apt.id" 
@@ -155,26 +176,28 @@
       <!-- Sub Views -->
       <BrowseDoctors v-if="activeView === 'browse-doctors'" @back="activeView = 'dashboard'" />
       <MyAppointments v-if="activeView === 'my-appointments'" @back="activeView = 'dashboard'" />
-      <PatientChat v-if="activeView === 'chat'" @back="activeView = 'dashboard'" />
+      <PatientChat v-if="activeView === 'chat'" @back="activeView = 'dashboard'"/>
       <Pharmacy v-if="activeView === 'pharmacy'" @back="activeView = 'dashboard'" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppointmentCard from '@/components/patient/AppointmentCard.vue'
 import PatientStats from '@/components/patient/PatientStats.vue'
+import ChatWindow from '@/components/chat/ChatWindow.vue'
 import BrowseDoctors from '@/views/patient/BrowseDoctors.vue'
 import MyAppointments from '@/views/patient/MyAppointments.vue'
-import PatientChat from '@/views/patient/PatientChat.vue'
 import Pharmacy from '@/views/patient/Pharmacy.vue'
+import PatientChat from './PatientChat.vue'
 
 const router = useRouter()
 const activeView = ref('dashboard')
 const showDropdown = ref(false)
 const unreadMessages = ref(1)
+const notifications = ref([])
 
 const user = ref({
   name: 'Test Patient',
@@ -219,9 +242,49 @@ const pendingActions = ref([
   { id: 3, emoji: '✓', title: 'Confirm Appointment', desc: 'Confirm with Dr. Sarah Johnson' }
 ])
 
+// Notification functions
+const getNotificationClass = (type) => {
+  const classes = {
+    success: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
+    error: 'bg-gradient-to-r from-red-500 to-red-600 text-white',
+    info: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
+    warning: 'bg-gradient-to-r from-yellow-500 to-orange-600 text-white'
+  }
+  return `${classes[type] || classes.info} px-4 py-3 rounded-xl shadow-lg border border-white/20`
+}
+
+const getNotificationIcon = (type) => {
+  const icons = {
+    success: '✓',
+    error: '✕',
+    info: 'ℹ',
+    warning: '⚠'
+  }
+  return icons[type] || '•'
+}
+
+const removeNotification = (id) => {
+  notifications.value = notifications.value.filter(n => n.id !== id)
+}
+
+const addNotification = (title, message, type = 'info', duration = 3000) => {
+  const id = Date.now()
+  notifications.value.push({ id, title, message, type })
+  
+  if (duration > 0) {
+    setTimeout(() => removeNotification(id), duration)
+  }
+}
+
 const logout = () => {
   router.push('/login')
 }
+
+// Example: Add a test notification when component mounts
+onMounted(() => {
+  // Uncomment to test
+  // addNotification('Welcome!', 'You have 1 new message', 'info', 5000)
+})
 </script>
 
 <style scoped>
@@ -261,6 +324,25 @@ const logout = () => {
 }
 
 .animation-delay-2000 {
-  animation-delay: 2s;                 
+  animation-delay: 2s;
 }
-</style>                                                               
+
+@keyframes slide-in {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.notification {
+  backdrop-filter: blur(10px);
+}
+</style>

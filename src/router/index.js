@@ -1,3 +1,4 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -9,21 +10,69 @@ import DoctorRegister from '@/views/auth/DoctorRegister.vue'
 
 import PatientDashboard from '@/views/patient/PatientDashboard.vue'
 import DoctorDashboard from '@/views/doctor/DoctorDashboard.vue'
+import PatientProfile from '@/views/patient/PatientProfile.vue'
+import HealthRecords from '@/views/patient/HealthRecords.vue'
 
 const routes = [
   { path: '/', name: 'Landing', component: Landing },
 
-  // Patient Auth
-  { path: '/patient/login', component: PatientLogin },
-  { path: '/patient/register', component: PatientRegister },
-  { path: '/patient/dashboard', component: PatientDashboard, meta: { requiresAuth: true } },
+  // Patient Auth - BOTH paths for flexibility
+  { path: '/patient/login', name: 'PatientLogin', component: PatientLogin },
+  { path: '/login', redirect: '/patient/login' },
+  { path: '/patient/register', name: 'PatientRegister', component: PatientRegister },
+  { path: '/patient-register', redirect: '/patient/register' }, // ✅ Added alias
 
-  // Doctor Auth
-  { path: '/doctor/login', component: DoctorLogin },
-  { path: '/doctor/register', component: DoctorRegister },
-  { path: '/doctor/dashboard', component: DoctorDashboard, meta: { requiresAuth: true } },
+  // Patient Routes (Protected)
+  { 
+    path: '/patient/dashboard', 
+    name: 'PatientDashboard', 
+    component: PatientDashboard, 
+    meta: { requiresAuth: true } 
+  },
+  {
+    path: '/patient/profile',
+    name: 'PatientProfile',
+    component: PatientProfile,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/patient/health-records',
+    name: 'HealthRecords',
+    component: HealthRecords,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/patient/appointments',
+    name: 'PatientAppointments',
+    component: () => import('@/views/patient/MyAppointments.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/patient/chat',
+    name: 'PatientChat',
+    component: () => import('@/components/chat/PatientChat.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/patient/pharmacy',
+    name: 'PatientPharmacy',
+    component: () => import('@/views/patient/Pharmacy.vue'),
+    meta: { requiresAuth: true }
+  },
 
-  // PUBLIC PAGES YOU REQUESTED
+  // Doctor Auth - BOTH paths for flexibility
+  { path: '/doctor/login', name: 'DoctorLogin', component: DoctorLogin },
+  { path: '/doctor-login', redirect: '/doctor/login' }, // ✅ Added alias
+  { path: '/doctor/register', name: 'DoctorRegister', component: DoctorRegister },
+  { path: '/doctor-register', redirect: '/doctor/register' }, // ✅ Added alias
+  { 
+    path: '/doctor/dashboard', 
+    name: 'DoctorDashboard', 
+    component: DoctorDashboard, 
+    meta: { requiresAuth: true } 
+  },
+
+  // Public Pages
   {
     path: '/doctors',
     name: 'Doctors',
@@ -41,17 +90,27 @@ const router = createRouter({
   routes
 })
 
-// Route Guard
+// ✅ Navigation guard with better error handling
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
+  try {
+    const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth && !authStore.token) {
-    if (to.path.includes('doctor')) {
-      next('/doctor/login')
-    } else {
-      next('/patient/login')
+    if (to.meta.requiresAuth) {
+      if (!authStore?.token) {
+        console.warn('⚠️ Auth required but no token found')
+        
+        // Redirect to appropriate login
+        if (to.path.startsWith('/doctor')) {
+          return next('/doctor/login')
+        } else {
+          return next('/patient/login')
+        }
+      }
     }
-  } else {
+    
+    next()
+  } catch (error) {
+    console.error('❌ Router guard error:', error)
     next()
   }
 })

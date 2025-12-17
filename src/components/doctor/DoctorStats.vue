@@ -1,184 +1,207 @@
 <template>
-  <div>
-    <!-- Primary Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-      <!-- Pending Requests -->
-      <div class="group relative cursor-pointer h-full">
-        <div class="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
-        <div class="relative bg-gradient-to-br from-yellow-50 via-yellow-50 to-orange-50 backdrop-blur-sm border border-yellow-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-yellow-500/60 transition hover:shadow-2xl hover:shadow-yellow-200/30">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
-          <div class="relative">
-            <p class="text-yellow-700 text-sm font-semibold mb-3">⏳ Pending Requests</p>
-            <h3 class="text-5xl font-bold text-yellow-600">{{ pendingCount }}</h3>
-            <p class="text-yellow-600 text-xs mt-2 font-medium">Awaiting action</p>
-            <div class="mt-4 h-2 bg-yellow-200 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full" style="width: 45%"></div>
-            </div>
-          </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Pending Requests -->
+    <div class="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20 hover:border-yellow-500/40 transition">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-yellow-500/20 rounded-xl">
+          <img src="/pending.png" alt="Pending" class="w-6 h-6" />
         </div>
+        <span class="text-yellow-400 text-sm font-semibold">Pending Requests</span>
       </div>
-
-      <!-- Total Patients -->
-      <div class="group relative cursor-pointer h-full">
-        <div class="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
-        <div class="relative bg-gradient-to-br from-green-50 via-green-50 to-emerald-50 backdrop-blur-sm border border-green-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-green-500/60 transition hover:shadow-2xl hover:shadow-green-200/30">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
-          <div class="relative">
-            <p class="text-green-700 text-sm font-semibold mb-3">👥 Total Patients</p>
-            <h3 class="text-5xl font-bold text-green-600">{{ patientsCount }}</h3>
-            <p class="text-green-600 text-xs mt-2 font-medium">All time</p>
-            <div class="mt-4 h-2 bg-green-200 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width: 78%"></div>
-            </div>
-          </div>
-        </div>
+      <div class="text-4xl font-bold text-white mb-2">
+        {{ animatedPending }}
       </div>
-
-      <!-- Messages -->
-      <div class="group relative cursor-pointer h-full">
-        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
-        <div class="relative bg-gradient-to-br from-blue-50 via-blue-50 to-cyan-50 backdrop-blur-sm border border-blue-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-blue-500/60 transition hover:shadow-2xl hover:shadow-blue-200/30">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
-          <div class="relative">
-            <p class="text-blue-700 text-sm font-semibold mb-3">💬 Messages</p>
-            <h3 class="text-5xl font-bold text-blue-600">{{ messagesCount }}</h3>
-            <p class="text-blue-600 text-xs mt-2 font-medium">Unread</p>
-            <div class="mt-4 h-2 bg-blue-200 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full" style="width: 35%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Rating -->
-      <div class="group relative cursor-pointer h-full">
-        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
-        <div class="relative bg-gradient-to-br from-purple-50 via-purple-50 to-pink-50 backdrop-blur-sm border border-purple-300/50 rounded-2xl p-8 overflow-hidden group-hover:border-purple-500/60 transition hover:shadow-2xl hover:shadow-purple-200/30">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition duration-300"></div>
-          <div class="relative">
-            <p class="text-purple-700 text-sm font-semibold mb-3">⭐ Rating</p>
-            <div class="flex items-center gap-2">
-              <h3 class="text-5xl font-bold text-purple-600">{{ ratingCount }}</h3>
-              <span class="text-3xl animate-bounce">⭐</span>
-            </div>
-            <p class="text-purple-600 text-xs mt-2 font-medium">/ 5.0 Rating</p>
-            <div class="mt-4 h-2 bg-purple-200 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" style="width: 96%"></div>
-            </div>
-          </div>
-        </div>
+      <p class="text-gray-400 text-sm">Awaiting action</p>
+      <div class="mt-4 w-full bg-yellow-500/20 rounded-full h-2">
+        <div class="bg-yellow-500 h-2 rounded-full transition-all duration-1000" :style="{ width: '60%' }"></div>
       </div>
     </div>
 
-    <!-- Secondary Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-      <!-- Completed -->
-      <div class="group relative">
-        <div class="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-2xl blur-lg group-hover:blur-xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
-        <div class="relative bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 rounded-2xl p-8 group-hover:border-green-500/40 transition hover:shadow-xl hover:shadow-green-200/20">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-green-700 text-sm font-semibold mb-3">✓ Completed</p>
-              <h4 class="text-4xl font-bold text-green-600">{{ completedCount }}</h4>
-              <p class="text-green-600 text-xs mt-1 font-medium">Appointments</p>
-            </div>
-            <div class="text-6xl opacity-20">✓</div>
-          </div>
+    <!-- Total Patients -->
+    <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20 hover:border-green-500/40 transition">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-green-500/20 rounded-xl">
+         <img src="/multiple-users-silhouette.png" alt="Patients" class="w-6 h-6" />
         </div>
+        <span class="text-green-400 text-sm font-semibold">Total Patients</span>
       </div>
-
-      <!-- Success Rate -->
-      <div class="group relative">
-        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl blur-lg group-hover:blur-xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
-        <div class="relative bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200/50 rounded-2xl p-8 group-hover:border-blue-500/40 transition hover:shadow-xl hover:shadow-blue-200/20">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-blue-700 text-sm font-semibold mb-3">📊 Success Rate</p>
-              <h4 class="text-4xl font-bold text-blue-600">{{ successRateCount }}%</h4>
-              <p class="text-blue-600 text-xs mt-1 font-medium">Patient Satisfaction</p>
-            </div>
-            <div class="text-6xl opacity-20">📊</div>
-          </div>
-        </div>
+      <div class="text-4xl font-bold text-white mb-2">
+        {{ animatedPatients }}
       </div>
+      <p class="text-gray-400 text-sm">All time</p>
+      <div class="mt-4 w-full bg-green-500/20 rounded-full h-2">
+        <div class="bg-green-500 h-2 rounded-full transition-all duration-1000" :style="{ width: '85%' }"></div>
+      </div>
+    </div>
 
-      <!-- Next Appointment -->
-      <div class="group relative">
-        <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 to-pink-500/10 rounded-2xl blur-lg group-hover:blur-xl transition duration-300 opacity-0 group-hover:opacity-100"></div>
-        <div class="relative bg-gradient-to-br from-red-50 to-pink-50 border border-red-200/50 rounded-2xl p-8 group-hover:border-red-500/40 transition hover:shadow-xl hover:shadow-red-200/20">
-          <div>
-            <p class="text-red-700 text-sm font-semibold mb-3">📅 Next Appointment</p>
-            <h4 class="text-2xl font-bold text-red-600 mb-1">{{ stats.nextAppointment }}</h4>
-            <p class="text-red-600 text-xs font-medium">Today</p>
-          </div>
+    <!-- Messages -->
+    <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:border-blue-500/40 transition">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-blue-500/20 rounded-xl">
+          <img src="/message.png" alt="Messages" class="w-6 h-6" />
         </div>
+        <span class="text-blue-400 text-sm font-semibold">Messages</span>
+      </div>
+      <div class="text-4xl font-bold text-white mb-2">
+        {{ animatedMessages }}
+      </div>
+      <p class="text-gray-400 text-sm">Unread</p>
+      <div class="mt-4 w-full bg-blue-500/20 rounded-full h-2">
+        <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000" :style="{ width: '40%' }"></div>
+      </div>
+    </div>
+
+    <!-- Rating -->
+    <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-purple-500/20 rounded-xl">
+          <img src="/rating.png" alt="Rating" class="w-6 h-6" />
+        </div>
+        <span class="text-purple-400 text-sm font-semibold">Rating</span>
+      </div>
+      <div class="text-4xl font-bold text-white mb-2">
+        {{ animatedRating }}
+      </div>
+      <p class="text-gray-400 text-sm">/ 5.0 Rating</p>
+      <div class="mt-4 w-full bg-purple-500/20 rounded-full h-2">
+        <div class="bg-purple-500 h-2 rounded-full transition-all duration-1000" :style="{ width: '96%' }"></div>
+      </div>
+    </div>
+
+    <!-- Completed Appointments -->
+    <div class="bg-gradient-to-br from-green-500/10 to-teal-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20 hover:border-green-500/40 transition">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-green-500/20 rounded-xl">
+          <img src="/medical-appointment.png" alt="Completed" class="w-6 h-6" />
+        </div>
+        <span class="text-green-400 text-sm font-semibold">Completed</span>
+      </div>
+      <div class="text-4xl font-bold text-white mb-2">
+        {{ animatedCompleted }}
+      </div>
+      <p class="text-gray-400 text-sm">Appointments</p>
+      <div class="mt-4 w-full bg-green-500/20 rounded-full h-2">
+        <div class="bg-green-500 h-2 rounded-full transition-all duration-1000" :style="{ width: '100%' }"></div>
+      </div>
+    </div>
+
+    <!-- Success Rate -->
+    <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:border-blue-500/40 transition">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-blue-500/20 rounded-xl">
+          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <span class="text-blue-400 text-sm font-semibold">Success Rate</span>
+      </div>
+      <div class="text-4xl font-bold text-white mb-2">
+        {{ animatedSuccess }}%
+      </div>
+      <p class="text-gray-400 text-sm">Patient Satisfaction</p>
+      <div class="mt-4 w-full bg-blue-500/20 rounded-full h-2">
+        <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000" :style="{ width: stats.successRate + '%' }"></div>
+      </div>
+    </div>
+
+    <!-- Next Appointment -->
+    <div class="bg-gradient-to-br from-red-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-red-500/20 hover:border-red-500/40 transition lg:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-red-500/20 rounded-xl">
+          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <span class="text-red-400 text-sm font-semibold">Next Appointment</span>
+      </div>
+      <div class="text-3xl font-bold text-white mb-2">
+        {{ stats.nextAppointment }}
+      </div>
+      <p class="text-gray-400 text-sm">Today</p>
+      <div class="mt-4 flex gap-3">
+        <button class="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition text-sm font-semibold">
+          View Details
+        </button>
+        <button class="px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition text-sm font-semibold">
+          Start Consultation
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 const props = defineProps({
   stats: {
     type: Object,
-    required: true
+    required: true,
+    default: () => ({
+      pendingRequests: 0,
+      totalPatients: 0,
+      unreadMessages: 0,
+      rating: 0,
+      completedAppointments: 0,
+      successRate: 0,
+      nextAppointment: 'No upcoming appointments'
+    })
   }
 })
 
-const pendingCount = ref(0)
-const patientsCount = ref(0)
-const messagesCount = ref(0)
-const ratingCount = ref(0)
-const completedCount = ref(0)
-const successRateCount = ref(0)
+// Animated values
+const animatedPending = ref(0)
+const animatedPatients = ref(0)
+const animatedMessages = ref(0)
+const animatedRating = ref(0)
+const animatedCompleted = ref(0)
+const animatedSuccess = ref(0)
 
-const animateCounter = (current, target, duration = 2000, decimals = 0) => {
-  const steps = duration / 50
-  const increment = (target - current.value) / steps
-  let step = 0
-  const interval = setInterval(() => {
-    step++
-    current.value += increment
-    if (step >= steps) {
-      current.value = target
-      clearInterval(interval)
+// Animation function
+const animateValue = (target, endValue, decimals = 0) => {
+  const duration = 2000
+  const startTime = Date.now()
+  const startValue = 0
+
+  const step = () => {
+    const currentTime = Date.now()
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    
+    const easeOutQuart = 1 - Math.pow(1 - progress, 4)
+    const currentValue = startValue + (endValue - startValue) * easeOutQuart
+
+    target.value = decimals > 0 
+      ? currentValue.toFixed(decimals)
+      : Math.floor(currentValue)
+
+    if (progress < 1) {
+      requestAnimationFrame(step)
+    } else {
+      target.value = decimals > 0 ? endValue.toFixed(decimals) : endValue
     }
-  }, 50)
+  }
+
+  requestAnimationFrame(step)
 }
 
-// Rounded versions for display
-const roundedPending = computed(() => Math.round(pendingCount.value))
-const roundedPatients = computed(() => Math.round(patientsCount.value))
-const roundedMessages = computed(() => Math.round(messagesCount.value))
-const roundedRating = computed(() => ratingCount.value.toFixed(1)) // keep 1 decimal
-const roundedCompleted = computed(() => Math.round(completedCount.value))
-const roundedSuccessRate = computed(() => Math.round(successRateCount.value))
-
+// Start animations on mount
 onMounted(() => {
-  animateCounter(pendingCount, props.stats.pendingRequests)
-  animateCounter(patientsCount, props.stats.totalPatients)
-  animateCounter(messagesCount, props.stats.unreadMessages)
-  animateCounter(ratingCount, props.stats.rating, 2000) // allow decimal
-  animateCounter(completedCount, props.stats.completedAppointments)
-  animateCounter(successRateCount, props.stats.successRate)
+  animateValue(animatedPending, props.stats.pendingRequests, 0)
+  animateValue(animatedPatients, props.stats.totalPatients, 0)
+  animateValue(animatedMessages, props.stats.unreadMessages, 0)
+  animateValue(animatedRating, props.stats.rating, 1)
+  animateValue(animatedCompleted, props.stats.completedAppointments, 0)
+  animateValue(animatedSuccess, props.stats.successRate, 0)
 })
+
+// Watch for stats changes
+watch(() => props.stats, (newStats) => {
+  animateValue(animatedPending, newStats.pendingRequests, 0)
+  animateValue(animatedPatients, newStats.totalPatients, 0)
+  animateValue(animatedMessages, newStats.unreadMessages, 0)
+  animateValue(animatedRating, newStats.rating, 1)
+  animateValue(animatedCompleted, newStats.completedAppointments, 0)
+  animateValue(animatedSuccess, newStats.successRate, 0)
+}, { deep: true })
 </script>
-
-
-
-<style scoped>
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.animate-bounce {
-  animation: bounce 1s infinite;
-}
-</style>

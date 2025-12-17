@@ -6,7 +6,9 @@
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
-              <span class="text-white font-bold">D</span>
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
             </div>
             <h1 class="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
               Doctor Portal
@@ -66,36 +68,46 @@
         <div class="relative p-8 md:p-12">
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Welcome back, {{ user.name }}! 👨‍⚕️</h2>
+              <h2 class="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                Welcome back, {{ user.name }}! 
+                 <img src="/doctor.png" alt="Doctor" class="w-8 h-9" />
+              </h2>
               <p class="text-gray-300">Manage your appointments and patient communications</p>
             </div>
-            <div class="hidden md:block text-6xl opacity-20">🏥</div>
+            <div class="hidden md:block">
+              <svg class="w-24 h-24 text-purple-300 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Doctor Stats Component -->
-      <DoctorStats :stats="doctorStats" class="mb-12" />
+      <DoctorStats v-if="doctorStats" :stats="doctorStats" class="mb-12" />
 
       <!-- Tab Navigation -->
       <div class="flex gap-4 mb-8 border-b border-purple-500/20">
         <button 
           @click="activeTab = 'appointments'"
-          :class="['px-4 py-3 font-semibold transition', activeTab === 'appointments' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400 hover:text-purple-300']"
+          :class="['px-4 py-3 font-semibold transition flex items-center gap-2', activeTab === 'appointments' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400 hover:text-purple-300']"
         >
-          📅 Appointments
+          <img src="/medical-appointment.png" alt="Appointments" class="w-5 h-5" />
+          Appointments
         </button>
         <button 
           @click="activeTab = 'messages'"
-          :class="['px-4 py-3 font-semibold transition', activeTab === 'messages' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400 hover:text-purple-300']"
+          :class="['px-4 py-3 font-semibold transition flex items-center gap-2', activeTab === 'messages' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400 hover:text-purple-300']"
         >
-          💬 Messages
+          <img src="/chat.png" alt="Messages" class="w-5 h-5" />
+          Messages
         </button>
         <button 
           @click="activeTab = 'profile'"
-          :class="['px-4 py-3 font-semibold transition', activeTab === 'profile' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400 hover:text-purple-300']"
+          :class="['px-4 py-3 font-semibold transition flex items-center gap-2', activeTab === 'profile' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400 hover:text-purple-300']"
         >
-          👤 Profile
+          <img src="/profile.png" alt="Profile" class="w-5 h-5" />
+          Profile
         </button>
       </div>
 
@@ -118,7 +130,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -134,12 +146,13 @@ const authStore = useAuthStore()
 const activeTab = ref('appointments')
 const showDropdown = ref(false)
 
+// Initialize user with data from authStore or defaults
 const user = ref({
-  name: 'Test Doctor',
-  specialty: 'Cardiology',
-  email: 'test@doctor.com',
-  phone: '0700000001',
-  experience: 5,
+  name: authStore.user?.name || 'Test Doctor',
+  specialty: authStore.user?.specialty || 'Cardiology',
+  email: authStore.user?.email || 'test@doctor.com',
+  phone: authStore.user?.phone || '0700000001',
+  experience: authStore.user?.experience || 5,
   rating: 4.8,
   bio: 'Experienced cardiologist with over 5 years of practice',
   certifications: ['Board Certified Cardiologist', 'Heart Disease Specialist'],
@@ -150,6 +163,7 @@ const user = ref({
   unreadMessages: 7
 })
 
+// Initialize doctor stats
 const doctorStats = ref({
   pendingRequests: 2,
   totalPatients: 156,
@@ -208,18 +222,15 @@ const sendMessage = (message) => {
   })
 }
 
-// --- UPDATED LOGOUT ---
 const logout = () => {
-  // Clear any auth tokens
   localStorage.removeItem('token')
   localStorage.removeItem('user')
-
-  // Clear Pinia auth store (if used)
+  localStorage.removeItem('userType')
+  
   if (authStore) {
-    authStore.$reset()
+    authStore.logout()
   }
 
-  // Redirect to doctor login page
   router.push('/doctor/login')
 }
 </script>
