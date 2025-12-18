@@ -1,12 +1,13 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-8 px-6 rounded-b-3xl shadow-lg">
-      <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-2">📅 My Appointments</h1>
-        <p class="text-blue-100">Manage and schedule your healthcare visits</p>
-      </div>
+    <div class="appointment-section">
+    <div class="flex items-center gap-2 mb-4">
+      <Calendar class="w-6 h-6 text-blue-500" />
+      <h2 class="text-2xl font-bold">My Appointments</h2>
     </div>
+    <p class="text-gray-600">Manage and schedule your healthcare visits</p>
+  </div>
 
     <div class="max-w-7xl mx-auto px-6 py-8">
       <!-- Status Tabs -->
@@ -326,6 +327,7 @@ import { ref, computed } from 'vue'
 import { useAppStore } from '@/stores/app'
 import Modal from '@/components/common/Modal.vue'
 import { capitalize } from '@/utils/helpers'
+import { Calendar } from 'lucide-vue-next'
 
 const appStore = useAppStore()
 

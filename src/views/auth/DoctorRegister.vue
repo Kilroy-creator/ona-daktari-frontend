@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen flex relative overflow-hidden">
     <!-- Galaxy Background -->
-<Galaxy
-  :mouse-repulsion="true"
-  :mouse-interaction="true"
-  :density="1.5"
-  :glow-intensity="0.5"
-  :saturation="0.8"
-  :hue-shift="240"
-  class="absolute inset-0 z-0"
-/>
+    <Galaxy
+      :mouse-repulsion="true"
+      :mouse-interaction="true"
+      :density="1.5"
+      :glow-intensity="0.5"
+      :saturation="0.8"
+      :hue-shift="240"
+      class="absolute inset-0 z-0"
+    />
 
     <!-- Aurora Background -->
     <Aurora />
@@ -25,32 +25,47 @@
 
       <div class="relative z-10 text-white text-center max-w-md">
         <ScrollReveal :delay="0">
-          <SplitText text="HealthCare Platform" class="text-4xl font-bold mb-6" />
+          <RotatingText
+            :texts="['Ona Daktari', 'Doctor Hub', 'Smart Practice']"
+            mainClassName="px-3 bg-blue-300 text-black overflow-hidden py-1 justify-center rounded-lg inline-block mb-6"
+            :staggerFrom="'last'"
+            :initial="{ y: '100%' }"
+            :animate="{ y: 0 }"
+            :exit="{ y: '-120%' }"
+            :staggerDuration="0.025"
+            splitLevelClassName="overflow-hidden pb-1"
+            :transition="{ type: 'spring', damping: 30, stiffness: 400 }"
+            :rotationInterval="2000"
+          />
+        </ScrollReveal>
+
+        <ScrollReveal :delay="200">
+          <SplitText text="Doctor Portal" class="text-4xl font-bold mb-6" />
         </ScrollReveal>
 
         <ScrollReveal :delay="400">
           <p class="text-lg text-blue-100 mb-8">
-            Connect with healthcare professionals anytime, anywhere. Your health, our priority.
+            Manage appointments, consult patients, and stay connected.
           </p>
         </ScrollReveal>
 
         <ScrollReveal :delay="600">
           <div class="grid grid-cols-3 gap-6 text-center">
             <div>
-              <div class="text-3xl font-bold">
-                <CountUp :end-value="500" :duration="2000" />+
+              <div class="text-3xl font-bold text-blue-300">
+                <CountUp :endValue="50" :duration="2000" :decimals="0" />+
               </div>
               <div class="text-sm text-blue-200 mt-1">Doctors</div>
             </div>
             <div>
-              <div class="text-3xl font-bold">
-                <CountUp :end-value="10000" :duration="2000" />+
+              <div class="text-3xl font-bold text-purple-300">
+                <CountUp :endValue="5000" :duration="2000" :decimals="0" />+
               </div>
               <div class="text-sm text-blue-200 mt-1">Patients</div>
             </div>
             <div>
-              <div class="text-3xl font-bold">
-                <CountUp :end-value="50000" :duration="2000" />+
+              <div class="text-3xl font-bold text-pink-300">
+                <CountUp :endValue="2500" :duration="2000" :decimals="0" />+
               </div>
               <div class="text-sm text-blue-200 mt-1">Appointments</div>
             </div>
@@ -64,6 +79,17 @@
       <FadeContent>
         <div class="w-full max-w-md">
           <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8">
+            <!-- Error Alert -->
+            <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">⚠️</span>
+                <div class="flex-1">
+                  <p class="font-semibold text-red-900 text-sm">{{ isLogin ? 'Login' : 'Registration' }} Failed</p>
+                  <p class="text-xs text-red-700">{{ errorMessage }}</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Toggle Between Login/Register -->
             <div class="flex gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
               <button
@@ -135,10 +161,10 @@
                 <MagnetButton class="w-full">
                   <button
                     type="submit"
-                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="isLoading"
                   >
-                    {{ isLoading ? 'Logging in...' : 'Sign In' }}
+                    {{ isLoading ? 'Signing in...' : 'Sign In' }}
                   </button>
                 </MagnetButton>
 
@@ -175,12 +201,22 @@
                     <span class="text-sm font-medium">GitHub</span>
                   </button>
                 </div>
+
+                <!-- Link to Patient Login -->
+                <div class="text-center mt-4">
+                  <p class="text-sm text-gray-600">
+                    Not a doctor? 
+                    <router-link to="/patient/login" class="text-blue-600 hover:text-blue-700 font-semibold">
+                      Login as Patient
+                    </router-link>
+                  </p>
+                </div>
               </form>
             </AnimatedContent>
 
             <!-- Register Form -->
             <AnimatedContent v-else>
-              <form @submit.prevent="handleRegister" class="space-y-5">
+              <form @submit.prevent="handleRegister" class="space-y-5 max-h-[60vh] overflow-y-auto">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <TrueFocus>
@@ -241,26 +277,13 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">License Number</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
                   <TrueFocus>
                     <input
-                      v-model="formData.license"
-                      type="text"
-                      placeholder="MC/12345"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                      required
-                    />
-                  </TrueFocus>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Hourly Rate (KES)</label>
-                  <TrueFocus>
-                    <input
-                      v-model.number="formData.hourlyRate"
+                      v-model.number="formData.experience"
                       type="number"
-                      placeholder="1500"
-                      min="100"
+                      placeholder="5"
+                      min="0"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
                       required
                     />
@@ -312,7 +335,7 @@
                 <MagnetButton class="w-full">
                   <button
                     type="submit"
-                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="isLoading"
                   >
                     {{ isLoading ? 'Registering...' : 'Create Account' }}
@@ -343,11 +366,13 @@ import AnimatedContent from '@/components/animations/AnimatedContent.vue'
 import ScrollReveal from '@/components/animations/ScrollReveal.vue'
 import CountUp from '@/components/animations/CountUp.vue'
 import Galaxy from '@/components/animations/Galaxy.vue'
+import RotatingText from '@/components/animations/RotatingText.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const isLogin = ref(true)
+const errorMessage = ref('')
 
 const loginForm = ref({
   email: '',
@@ -359,8 +384,7 @@ const formData = ref({
   email: '',
   phone: '',
   specialty: '',
-  license: '',
-  hourlyRate: 1500,
+  experience: 0,
   password: '',
   confirmPassword: '',
   agreeTerms: false
@@ -372,53 +396,61 @@ const isLoading = ref(false)
 
 const handleLogin = async () => {
   isLoading.value = true
+  errorMessage.value = ''
 
   try {
-    await authStore.login(loginForm.value.email, loginForm.value.password, 'doctor')
+    console.log('🔐 Attempting doctor login...')
+    
+    await authStore.login(
+      loginForm.value.email,
+      loginForm.value.password,
+      'doctor'
+    )
+    
+    console.log('✅ Login successful, redirecting...')
     router.push('/doctor/dashboard')
   } catch (err) {
-    console.error('Login failed:', err)
-    alert('Login failed. Please check your credentials.')
+    console.error('❌ Login failed:', err)
+    errorMessage.value = err.message || 'Login failed. Please check your credentials.'
   } finally {
     isLoading.value = false
   }
 }
 
 const handleRegister = async () => {
-  // Validate passwords match
   if (formData.value.password !== formData.value.confirmPassword) {
-    alert('Passwords do not match')
+    errorMessage.value = 'Passwords do not match'
     return
   }
 
-  // Validate terms
   if (!formData.value.agreeTerms) {
-    alert('Please agree to Terms of Service and Privacy Policy')
+    errorMessage.value = 'Please agree to Terms of Service and Privacy Policy'
     return
   }
 
   isLoading.value = true
+  errorMessage.value = ''
 
   try {
-    console.log('Sending doctor registration with data:', formData.value)
+    console.log('📝 Attempting doctor registration...')
     
     await authStore.registerDoctor({
       full_name: formData.value.name,
       email: formData.value.email,
       phone: formData.value.phone,
-      specialization: formData.value.specialty,
-      license_no: formData.value.license,
+      specialty: formData.value.specialty,
+      experience: formData.value.experience,
       password: formData.value.password,
       password_confirmation: formData.value.confirmPassword,
     })
 
+    console.log('✅ Registration successful, redirecting...')
     router.push('/doctor/dashboard')
   } catch (err) {
-    console.error('Registration failed:', err.message)
-    alert(`Registration failed: ${err.message}`)
+    console.error('❌ Registration failed:', err)
+    errorMessage.value = err.message || 'Registration failed. Please try again.'
   } finally {
     isLoading.value = false
   }
 }
-
 </script>

@@ -14,13 +14,31 @@ import PatientProfile from '@/views/patient/PatientProfile.vue'
 import HealthRecords from '@/views/patient/HealthRecords.vue'
 
 const routes = [
-  { path: '/', name: 'Landing', component: Landing },
+  { 
+    path: '/', 
+    name: 'Landing', 
+    component: Landing 
+  },
 
-  // Patient Auth - BOTH paths for flexibility
-  { path: '/patient/login', name: 'PatientLogin', component: PatientLogin },
-  { path: '/login', redirect: '/patient/login' },
-  { path: '/patient/register', name: 'PatientRegister', component: PatientRegister },
-  { path: '/patient-register', redirect: '/patient/register' }, // ✅ Added alias
+  // Patient Auth - Multiple paths support
+  { 
+    path: '/patient/login', 
+    name: 'PatientLogin', 
+    component: PatientLogin 
+  },
+  { 
+    path: '/login', 
+    redirect: '/patient/login' 
+  },
+  { 
+    path: '/patient/register', 
+    name: 'PatientRegister', 
+    component: PatientRegister 
+  },
+  { 
+    path: '/patient-register', 
+    redirect: '/patient/register' 
+  },
 
   // Patient Routes (Protected)
   { 
@@ -36,10 +54,18 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/profile',
+    redirect: '/patient/profile'
+  },
+  {
     path: '/patient/health-records',
     name: 'HealthRecords',
     component: HealthRecords,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/health-records',
+    redirect: '/patient/health-records'
   },
   {
     path: '/patient/appointments',
@@ -60,11 +86,25 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
-  // Doctor Auth - BOTH paths for flexibility
-  { path: '/doctor/login', name: 'DoctorLogin', component: DoctorLogin },
-  { path: '/doctor-login', redirect: '/doctor/login' }, // ✅ Added alias
-  { path: '/doctor/register', name: 'DoctorRegister', component: DoctorRegister },
-  { path: '/doctor-register', redirect: '/doctor/register' }, // ✅ Added alias
+  // Doctor Auth - Multiple paths support
+  { 
+    path: '/doctor/login', 
+    name: 'DoctorLogin', 
+    component: DoctorLogin 
+  },
+  { 
+    path: '/doctor-login', 
+    redirect: '/doctor/login' 
+  },
+  { 
+    path: '/doctor/register', 
+    name: 'DoctorRegister', 
+    component: DoctorRegister 
+  },
+  { 
+    path: '/doctor-register', 
+    redirect: '/doctor/register' 
+  },
   { 
     path: '/doctor/dashboard', 
     name: 'DoctorDashboard', 
@@ -90,27 +130,22 @@ const router = createRouter({
   routes
 })
 
-// ✅ Navigation guard with better error handling
+// Navigation guard
 router.beforeEach((to, from, next) => {
   try {
     const authStore = useAuthStore()
 
-    if (to.meta.requiresAuth) {
-      if (!authStore?.token) {
-        console.warn('⚠️ Auth required but no token found')
-        
-        // Redirect to appropriate login
-        if (to.path.startsWith('/doctor')) {
-          return next('/doctor/login')
-        } else {
-          return next('/patient/login')
-        }
-      }
+    if (to.meta.requiresAuth && !authStore?.token) {
+      const loginPath = to.path.startsWith('/doctor') 
+        ? '/doctor/login' 
+        : '/patient/login'
+      
+      return next(loginPath)
     }
     
     next()
   } catch (error) {
-    console.error('❌ Router guard error:', error)
+    console.error('Router guard error:', error)
     next()
   }
 })
