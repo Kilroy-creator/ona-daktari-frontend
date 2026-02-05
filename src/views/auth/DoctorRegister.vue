@@ -289,6 +289,23 @@
                     />
                   </TrueFocus>
                 </div>
+                <div>
+  <label class="block text-sm font-medium text-gray-700 mb-2">
+    Medical License Number
+  </label>
+  <TrueFocus>
+    <input
+      v-model="formData.licenseNumber"
+      type="text"
+      placeholder="e.g., KMP-12345"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+      required
+    />
+  </TrueFocus>
+  <p class="text-xs text-gray-500 mt-1">
+    Enter your official medical license number
+  </p>
+</div>
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
@@ -385,6 +402,7 @@ const formData = ref({
   phone: '',
   specialty: '',
   experience: 0,
+  licenseNumber: '',  // 👈 ADD THIS LINE
   password: '',
   confirmPassword: '',
   agreeTerms: false
