@@ -295,7 +295,7 @@
   </label>
   <TrueFocus>
     <input
-      v-model="formData.licenseNumber"
+      v-model="formData.license_number"
       type="text"
       placeholder="e.g., KMP-12345"
       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
@@ -402,7 +402,7 @@ const formData = ref({
   phone: '',
   specialty: '',
   experience: 0,
-  licenseNumber: '',  // 👈 ADD THIS LINE
+  license_number: '',  // 👈 ADD THIS LINE
   password: '',
   confirmPassword: '',
   agreeTerms: false
