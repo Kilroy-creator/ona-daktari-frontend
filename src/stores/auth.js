@@ -168,7 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
       
       let endpoint = ''
       if (role === 'patient') endpoint = '/api/patient/login'
-      else if (role === 'doctor') endpoint = '/doctors/login'
+      else if (role === 'doctor') endpoint = '/api/doctors/login'
       else throw new Error('Invalid role')
 
       const response = await apiCall(endpoint, 'POST', { email, password })
@@ -289,7 +289,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       console.log('📦 Sending payload:', { ...payload, password: '***', password_confirmation: '***' })
 
-      const response = await apiCall('/doctors/register', 'POST', payload)
+      const response = await apiCall('/api/doctors/register', 'POST', payload)
 
       console.log('📦 Full response:', response)
 
