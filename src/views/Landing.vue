@@ -9,32 +9,32 @@
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10 h-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
+      <div class="max-w-7xl mx-auto px-4 h-full flex justify-between items-center">
 
         <!-- Logo -->
         <div class="flex items-center gap-2 min-w-fit">
-          <div class="w-8 h-8 flex-shrink-0">
+          <div class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0">
             <LoopLogo class="w-full h-full" />
           </div>
-          <span class="hidden sm:block text-lg font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <span class="hidden sm:block text-sm sm:text-lg font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             Ona Daktari
           </span>
         </div>
 
         <!-- Desktop Nav -->
-        <div class="hidden md:flex gap-8 items-center">
+        <div class="hidden md:flex gap-6 lg:gap-8 items-center">
           <a href="#about" class="text-gray-300 hover:text-white transition text-sm">About</a>
           <a href="#features" class="text-gray-300 hover:text-white transition text-sm">Features</a>
           <router-link to="/patient/login" class="text-gray-300 hover:text-white transition text-sm">Patient</router-link>
           <router-link to="/doctor/login" class="text-gray-300 hover:text-white transition text-sm">Doctor</router-link>
-          <button @click="$router.push('/patient/register')" class="get-started-btn">
+          <button @click="$router.push('/patient/register')" class="get-started-btn text-sm">
             Get Started
           </button>
         </div>
 
         <!-- Mobile Menu Button -->
-        <button class="md:hidden text-white" @click="mobileMenuOpen = !mobileMenuOpen">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor">
+        <button class="md:hidden text-white p-2" @click="mobileMenuOpen = !mobileMenuOpen">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
@@ -42,12 +42,12 @@
 
       <!-- Mobile Menu -->
       <transition name="fade">
-        <div v-if="mobileMenuOpen" class="md:hidden bg-black/95 p-4 border-t border-white/10 space-y-2">
-          <a href="#about" class="block py-2 text-gray-300 hover:text-white">About</a>
-          <a href="#features" class="block py-2 text-gray-300 hover:text-white">Features</a>
-          <router-link to="/patient/login" class="block py-2 text-gray-300 hover:text-white">Patient</router-link>
-          <router-link to="/doctor/login" class="block py-2 text-gray-300 hover:text-white">Doctor</router-link>
-          <button @click="$router.push('/patient/register')" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition font-medium">
+        <div v-if="mobileMenuOpen" class="md:hidden bg-black/95 p-4 border-t border-white/10 space-y-3 absolute top-16 left-0 right-0">
+          <a href="#about" class="block py-2 text-gray-300 hover:text-white text-sm">About</a>
+          <a href="#features" class="block py-2 text-gray-300 hover:text-white text-sm">Features</a>
+          <router-link to="/patient/login" class="block py-2 text-gray-300 hover:text-white text-sm">Patient</router-link>
+          <router-link to="/doctor/login" class="block py-2 text-gray-300 hover:text-white text-sm">Doctor</router-link>
+          <button @click="$router.push('/patient/register')" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition font-medium text-sm">
             Get Started
           </button>
         </div>
@@ -55,14 +55,14 @@
     </nav>
 
     <!-- HERO SECTION -->
-    <section class="relative w-full pt-20 pb-16">
-      <Spotlight class="absolute -top-30 -right-40 w-96 h-76 bg-blue-500/20 rounded-full blur-3xl" />
+    <section class="relative w-full pt-20 pb-12 sm:pb-16">
+      <Spotlight class="absolute -top-20 sm:-top-30 -right-40 w-80 sm:w-96 h-64 sm:h-76 bg-blue-500/20 rounded-full blur-3xl" />
 
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-        <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div class="max-w-7xl mx-auto px-4 relative z-20">
+        <div class="grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
           <!-- Left Content -->
-          <div class="space-y-6">
-            <h1 class="text-5xl md:text-6xl font-bold leading-tight">
+          <div class="space-y-4 sm:space-y-6">
+            <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight">
               <span class="block text-white">Connect With</span>
               <span class="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Specialist Doctors
@@ -70,20 +70,20 @@
               <span class="block text-white">Anytime, Anywhere</span>
             </h1>
 
-            <p class="text-base text-gray-300 max-w-md">
+            <p class="text-sm sm:text-base text-gray-300 max-w-md">
               Book appointments with verified specialists, consult instantly, and manage your health from home.
             </p>
 
-            <div class="flex flex-col sm:flex-row gap-3 pt-4">
-              <button 
+            <div class="flex flex-col gap-2 sm:gap-3 pt-4">
+              <button
                 @click="$router.push('/patient/register')"
-                class="get-started-btn"
+                class="get-started-btn w-full sm:w-auto text-center"
               >
                 Book Appointment
               </button>
-              <button 
+              <button
                 @click="$router.push('/doctor/register')"
-                class="border-2 border-purple-500 text-purple-400 px-6 py-2 rounded-lg hover:bg-purple-500/20 transition font-semibold text-sm"
+                class="border-2 border-purple-500 text-purple-400 px-6 py-2 rounded-lg hover:bg-purple-500/20 transition font-semibold text-sm w-full sm:w-auto"
               >
                 Join as Doctor
               </button>
@@ -91,10 +91,10 @@
           </div>
 
           <!-- Right Visual -->
-           <div class="relative flex justify-center items-center h-64 md:h-80">
-            <IridescentOrb class="absolute w-56 h-56 blur-2xl opacity-60" />
+          <div class="relative flex justify-center items-center h-48 sm:h-64 md:h-80">
+            <IridescentOrb class="absolute w-40 sm:w-56 h-40 sm:h-56 blur-2xl opacity-60" />
             <div class="relative z-10 text-center">
-              <img src="/doctor.png" alt="Doctor" class="w-32 h-32 object-contain animate-bounce" />
+              <img src="/doctor.png" alt="Doctor" class="w-24 sm:w-32 h-24 sm:h-32 object-contain animate-bounce" />
             </div>
           </div>
         </div>
@@ -102,102 +102,101 @@
     </section>
 
     <!-- STATS SECTION -->
-    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid md:grid-cols-4 gap-6 bg-white/10 p-8 rounded-2xl border border-white/10 backdrop-blur">
+    <section class="relative max-w-7xl mx-auto px-4 py-8 sm:py-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 bg-white/10 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur">
         <ScrollReveal threshold="0.5">
           <div class="text-center">
-            <div class="text-3xl font-bold text-blue-400 mb-1">
+            <div class="text-2xl sm:text-3xl font-bold text-blue-400 mb-1">
               <CountUp :endValue="500" :duration="2000" />+
             </div>
-            <p class="text-sm text-gray-300">Happy Patients</p>
+            <p class="text-xs sm:text-sm text-gray-300">Happy Patients</p>
           </div>
         </ScrollReveal>
 
         <ScrollReveal threshold="0.5">
           <div class="text-center">
-            <div class="text-3xl font-bold text-green-400 mb-1">
+            <div class="text-2xl sm:text-3xl font-bold text-green-400 mb-1">
               <CountUp :endValue="25" :duration="2000" />+
             </div>
-            <p class="text-sm text-gray-300">Verified Doctors</p>
+            <p class="text-xs sm:text-sm text-gray-300">Verified Doctors</p>
           </div>
         </ScrollReveal>
 
         <ScrollReveal threshold="0.5">
           <div class="text-center">
-            <div class="text-3xl font-bold text-purple-400 mb-1">
+            <div class="text-2xl sm:text-3xl font-bold text-purple-400 mb-1">
               <CountUp :endValue="1500" :duration="2000" />+
             </div>
-            <p class="text-sm text-gray-300">Appointments</p>
+            <p class="text-xs sm:text-sm text-gray-300">Appointments</p>
           </div>
         </ScrollReveal>
 
         <ScrollReveal threshold="0.5">
           <div class="text-center">
-            <div class="text-3xl font-bold text-pink-400 mb-1">
+            <div class="text-2xl sm:text-3xl font-bold text-pink-400 mb-1">
               <CountUp :endValue="98" :duration="2000" />%
             </div>
-            <p class="text-sm text-gray-300">Satisfaction</p>
+            <p class="text-xs sm:text-sm text-gray-300">Satisfaction</p>
           </div>
         </ScrollReveal>
       </div>
     </section>
 
-    
     <!-- FEATURES SECTION -->
-    <section id="features" class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h2 class="text-3xl font-bold text-center text-white mb-12">
+    <section id="features" class="relative max-w-7xl mx-auto px-4 py-8 sm:py-12">
+      <h2 class="text-2xl sm:text-3xl font-bold text-center text-white mb-8 sm:mb-12">
         Why Choose Ona Daktari?
       </h2>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <div v-for="(feature, idx) in features" :key="idx" class="p-6 bg-white/10 backdrop-blur border border-white/10 rounded-2xl hover:bg-white/20 transition">
-          <img :src="`/${feature.icon}`" :alt="feature.title" class="w-12 h-12 mb-3 object-contain" />
-          <h3 class="text-lg font-bold text-white mb-2">{{ feature.title }}</h3>
-          <p class="text-sm text-gray-400">{{ feature.description }}</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+        <div v-for="(feature, idx) in features" :key="idx" class="p-4 sm:p-6 bg-white/10 backdrop-blur border border-white/10 rounded-2xl hover:bg-white/20 transition">
+          <img :src="`/${feature.icon}`" :alt="feature.title" class="w-10 sm:w-12 h-10 sm:h-12 mb-3 object-contain" />
+          <h3 class="text-base sm:text-lg font-bold text-white mb-2">{{ feature.title }}</h3>
+          <p class="text-xs sm:text-sm text-gray-400">{{ feature.description }}</p>
         </div>
       </div>
     </section>
 
     <!-- HOW IT WORKS SECTION -->
-    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h2 class="text-3xl font-bold text-center text-white mb-12">
+    <section class="relative max-w-7xl mx-auto px-4 py-8 sm:py-12">
+      <h2 class="text-2xl sm:text-3xl font-bold text-center text-white mb-8 sm:mb-12">
         How It Works
       </h2>
 
-      <div class="grid md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
         <div v-for="(step, idx) in steps" :key="idx" class="text-center">
-          <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-3">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-lg sm:text-2xl font-bold mx-auto mb-3">
             {{ idx + 1 }}
           </div>
-          <h3 class="text-base font-bold text-white mb-1">{{ step.title }}</h3>
+          <h3 class="text-sm sm:text-base font-bold text-white mb-1">{{ step.title }}</h3>
           <p class="text-xs text-gray-400">{{ step.description }}</p>
         </div>
       </div>
     </section>
 
     <!-- CTA SECTION -->
-    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-12 overflow-hidden">
+    <section class="relative max-w-7xl mx-auto px-4 py-8 sm:py-12">
+      <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl sm:rounded-3xl p-6 sm:p-12 overflow-hidden">
         <Beams class="absolute inset-0 opacity-10" />
-        
+
         <div class="relative z-10 text-center">
-          <h2 class="text-3xl font-bold text-white mb-4">
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
             Ready to Take Control of Your Health?
           </h2>
-          <p class="text-base text-white/90 mb-6 max-w-2xl mx-auto">
+          <p class="text-sm sm:text-base text-white/90 mb-6 max-w-2xl mx-auto">
             Join thousands of patients and doctors using Ona Daktari today.
           </p>
 
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <button 
+          <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
+            <button
               @click="$router.push('/patient/register')"
-              class="bg-white text-blue-600 px-6 py-2 rounded-lg hover:bg-gray-100 transition font-semibold text-sm"
+              class="bg-white text-blue-600 px-4 sm:px-6 py-2 rounded-lg hover:bg-gray-100 transition font-semibold text-sm"
             >
               Get Started Now
             </button>
-            <button 
+            <button
               @click="$router.push('/')"
-              class="border-2 border-white text-white px-6 py-2 rounded-lg hover:bg-white/10 transition font-semibold text-sm"
+              class="border-2 border-white text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-white/10 transition font-semibold text-sm"
             >
               Learn More
             </button>
@@ -207,28 +206,28 @@
     </section>
 
     <!-- FOOTER -->
-    <footer class="relative border-t border-white/10 mt-16 bg-black/50 backdrop-blur">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid md:grid-cols-4 gap-8 mb-8">
+    <footer class="relative border-t border-white/10 mt-12 sm:mt-16 bg-black/50 backdrop-blur">
+      <div class="max-w-7xl mx-auto px-4 py-8 sm:py-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
           <!-- Brand -->
           <div class="space-y-4">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8">
+              <div class="w-6 h-6 sm:w-8 sm:h-8">
                 <LoopLogo class="w-full h-full" />
               </div>
-              <span class="text-lg font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span class="text-sm sm:text-lg font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Ona Daktari
               </span>
             </div>
-            <p class="text-sm text-gray-400">
+            <p class="text-xs sm:text-sm text-gray-400">
               Connecting patients with healthcare professionals anytime, anywhere.
             </p>
           </div>
 
           <!-- Quick Links -->
           <div class="space-y-4">
-            <h3 class="font-semibold text-white">Quick Links</h3>
-            <ul class="space-y-2 text-sm">
+            <h3 class="font-semibold text-white text-sm sm:text-base">Quick Links</h3>
+            <ul class="space-y-2 text-xs sm:text-sm">
               <li><a href="#about" class="text-gray-400 hover:text-white transition">About Us</a></li>
               <li><a href="#features" class="text-gray-400 hover:text-white transition">Features</a></li>
               <li><router-link to="/patient/login" class="text-gray-400 hover:text-white transition">Patient Login</router-link></li>
@@ -238,8 +237,8 @@
 
           <!-- For Users -->
           <div class="space-y-4">
-            <h3 class="font-semibold text-white">For Users</h3>
-            <ul class="space-y-2 text-sm">
+            <h3 class="font-semibold text-white text-sm sm:text-base">For Users</h3>
+            <ul class="space-y-2 text-xs sm:text-sm">
               <li><router-link to="/patient/register" class="text-gray-400 hover:text-white transition">Patient Register</router-link></li>
               <li><router-link to="/doctor/register" class="text-gray-400 hover:text-white transition">Doctor Register</router-link></li>
               <li><a href="#" class="text-gray-400 hover:text-white transition">How It Works</a></li>
@@ -249,26 +248,26 @@
 
           <!-- Connect -->
           <div class="space-y-4">
-            <h3 class="font-semibold text-white">Connect With Us</h3>
-            <div class="flex gap-4">
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 hover:bg-blue-600 flex items-center justify-center transition">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <h3 class="font-semibold text-white text-sm sm:text-base">Connect With Us</h3>
+            <div class="flex gap-3 sm:gap-4">
+              <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-blue-600 flex items-center justify-center transition flex-shrink-0">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 hover:bg-blue-400 flex items-center justify-center transition">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2s9 5 20 5a9.5 9.5 0 00-9-5.5c4.75 2.25 7-7 7-7a10.6 10.6 0 01-9-5.5z"/></svg>
+              <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-blue-400 flex items-center justify-center transition flex-shrink-0">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2s9 5 20 5a9.5 9.5 0 00-9-5.5c4.75 2.25 7-7 7-7a10.6 10.6 0 01-9-5.5z"/></svg>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 hover:bg-purple-600 flex items-center justify-center transition">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-purple-600 flex items-center justify-center transition flex-shrink-0">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
               </a>
             </div>
           </div>
         </div>
 
         <!-- Divider -->
-        <div class="border-t border-white/10 pt-8">
-          <div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+        <div class="border-t border-white/10 pt-6 sm:pt-8">
+          <div class="flex flex-col md:flex-row justify-between items-center text-xs sm:text-sm text-gray-400 gap-4">
             <p>&copy; 2024 Ona Daktari. All rights reserved.</p>
-            <div class="flex gap-6 mt-4 md:mt-0">
+            <div class="flex gap-4 sm:gap-6">
               <a href="#" class="hover:text-white transition">Privacy Policy</a>
               <a href="#" class="hover:text-white transition">Terms of Service</a>
               <a href="#" class="hover:text-white transition">Contact</a>
@@ -316,7 +315,7 @@ const steps = [
 <style scoped>
 /* Get Started Button Hover Effect */
 .get-started-btn {
-  @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg text-sm font-medium relative overflow-hidden transition-all duration-300;
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 rounded-lg text-sm font-medium relative overflow-hidden transition-all duration-300;
   position: relative;
 }
 
